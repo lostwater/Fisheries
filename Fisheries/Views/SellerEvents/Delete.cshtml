@@ -1,0 +1,168 @@
+﻿@model Fisheries.Models.Event
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Event</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Shop.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Shop.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EventFrom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EventFrom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.EvenUntil)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.EvenUntil)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RegeristFrom)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RegeristFrom)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.RegeristUntil)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.RegeristUntil)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Discount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Discount)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DiscountPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DiscountPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.OxygenTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.OxygenTime)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BuyPrice)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BuyPrice)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FishType)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FishType)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FishQuantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FishQuantity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Positions)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Positions)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PositionsRemain)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.PositionsRemain)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Intro)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Intro)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Fisheries.Models.Event>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Shop.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EventFrom)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EvenUntil)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RegeristFrom)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RegeristUntil)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Discount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DiscountPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.OxygenTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BuyPrice)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FishType)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FishQuantity)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Positions)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PositionsRemain)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Description)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Intro)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Shop.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EventFrom)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.EvenUntil)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RegeristFrom)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RegeristUntil)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Price)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Discount)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DiscountPrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.StartTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.OxygenTime)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.BuyPrice)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FishType)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FishQuantity)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Positions)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PositionsRemain)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Description)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Intro)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+        </td>
+    </tr>
+}
+
+</table>
