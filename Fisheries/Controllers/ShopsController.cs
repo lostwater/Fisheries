@@ -20,8 +20,17 @@ namespace Fisheries.Controllers
         public async Task<ActionResult> Index()
         {
             var shops = db.Shops.Include(s => s.ApplicationUser);
+            var userId = Request.QueryString["userId"];
+            if (!string.IsNullOrEmpty(userId))
+                shops = shops.Where(s => s.ApplicationUserId == userId);
             return View(await shops.ToListAsync());
         }
+
+        //public async Task<ActionResult> Index(string id)
+        //{
+        //    var shops = db.Shops.Where(s=>s.ApplicationUserId == id).Include(s => s.ApplicationUser);
+        //    return View(await shops.ToListAsync());
+        //}
 
         // GET: Shops/Details/5
         public async Task<ActionResult> Details(int? id)

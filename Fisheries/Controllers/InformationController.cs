@@ -40,6 +40,7 @@ namespace Fisheries.Controllers
         // GET: Information/Create
         public ActionResult Create()
         {
+            ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name");
             //ViewBag.ApplicationUserId = new SelectList(db.InformationType.Where(u => u.Roles.Any(r => r.RoleId == roleId)), "Id", "UserName");
             return View();
         }
@@ -49,31 +50,31 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create( InformationCreateModel model)
+        public async Task<ActionResult> Create(Information model)
         {
             if (ModelState.IsValid)
             {
-                var fileName = Path.GetFileName(model.Image.FileName);
-                fileName = DateTime.Now.Ticks.ToString() + fileName;
-                var path = Path.Combine(Server.MapPath("~/InformationFile/"), fileName);
-                if (!Directory.Exists(Server.MapPath("~/InformationFile/")))
-                    Directory.CreateDirectory(Server.MapPath("~/InformationFile/"));
-                model.Image.SaveAs(path);
-
                 var information = new Information()
                 {
                     Title = model.Title,
                     VideoUrl = model.VideoUrl,
-                    Content = model.Content,
-                    Time = DateTime.Now,
-                    ImageUrl = Path.Combine("./InformationFile/", fileName),
-                    InformationTypeId = model.InformationTypeId
+                    Intro = model.Intro,
+                    CreatedTime = DateTime.Now,
+                    InformationTypeId = model.InformationTypeId,
+                    IsPublished = false
                 };
                 db.Information.Add(information);
                 await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
 
+                //var fileName = Path.GetFileName(model.Image.FileName);
+                //fileName = DateTime.Now.Ticks.ToString() + fileName;
+                var path = Path.Combine("~/InformationFiles/", information.Id.ToString());
+                if (!Directory.Exists(Server.MapPath(path)))
+                    Directory.CreateDirectory(Server.MapPath(path));
+                //model.Image.SaveAs(path);     
+                return RedirectToAction("DetailAndPub", information.Id);
+            }
+            ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
             return View(model);
         }
 
@@ -89,7 +90,9 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
-            return View(information);
+            var model = new InformationEditModel(information);
+            ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
+            return View(model);
         }
 
         // POST: Information/Edit/5
@@ -97,16 +100,42 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Title,VideoUrl,ImageUrl,Content,Time")] Information information)
+        public async Task<ActionResult> Edit(InformationEditModel model)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(information).State = EntityState.Modified;
+                //db.Entry(information).State = EntityState.Modified;
+                Information _information = await db.Information.FindAsync(model.Id);
+
+                if (model.Image != null)
+                {
+                    var fileName = Path.GetFileName(model.Image.FileName);
+                    var path = "~/InformationFiles/" + model.Id.ToString() + "/ ";
+                    path = Server.MapPath(path);
+                    if (!Directory.Exists(path))
+                        Directory.CreateDirectory(path);
+                    model.Image.SaveAs(path + fileName);
+                    _information.ImageUrl = path + fileName;
+                }
+                //var content = 
+                
+                _information.PublishedTime = DateTime.Now;
+                _information.Content = model.Content;
+                _information.Title = model.Title;          
+                _information.Intro = model.Intro;
+                
+                _information.VideoUrl = model.VideoUrl;
+                _information.IsPublished = model.IsPublished;
+
+                _information.InformationTypeId = model.InformationTypeId;
+
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            return View(information);
+            return View(model);
         }
+
+       
 
         // GET: Information/Delete/5
         public async Task<ActionResult> Delete(int? id)

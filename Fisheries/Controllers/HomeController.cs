@@ -10,6 +10,14 @@ namespace Fisheries.Controllers
     {
         public ActionResult Index()
         {
+            if (User.IsInRole("Administrator"))
+            {
+                return RedirectToAction("Index", "Account");
+            }
+            if (User.IsInRole("Seller"))
+            {
+                return RedirectToAction("Index","SellerPortal");
+            }
             return View();
         }
     }

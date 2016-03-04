@@ -83,10 +83,12 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,EventFrom,EvenUntil,RegeristFrom,RegeristUntil,Price,Discount,DiscountPrice,StartTime,OxygenTime,BuyPrice,FishType,Positions,PositionsRemain,Description,Intro,ShopId")] Event @event)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name,EventFrom,EvenUntil,RegeristFrom,RegeristUntil,Price,DiscountPrice,OxygenTime,BuyPrice,FishType,Positions,Description,Intro,ShopId")] Event @event)
         {
             if (ModelState.IsValid)
             {
+                @event.PositionsRemain = @event.Positions;
+                
                 db.Events.Add(@event);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");

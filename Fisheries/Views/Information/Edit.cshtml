@@ -1,21 +1,29 @@
-﻿@model Fisheries.Models.Information
+﻿@model Fisheries.Models.InformationEditModel
 
 @{
-    ViewBag.Title = "Edit";
+    var infoId = Model.Id;
+    ViewBag.Title = "详细内容";
 }
 
-<h2>Edit</h2>
+<h2>详情编辑</h2>
 
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(Html.BeginForm("Edit", "Information", FormMethod.Post, new { enctype = "multipart/form-data" })))
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Information</h4>
+        <h4>消息</h4>
         <hr />
+
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
+        <div class="form-group">
+            @Html.LabelFor(model => model.InformationTypeId, "信息类型", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("InformationTypeId",null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.InformationTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -26,40 +34,57 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.VideoUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Intro, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.VideoUrl, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.VideoUrl, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.Intro, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Intro, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ImageUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ImageUrl, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ImageUrl, "", new { @class = "text-danger" })
+                @Html.TextBoxFor(model => model.Image, new { type = "file" })
+                @Html.ValidationMessageFor(model => model.Image)
+                <!--<input type="file"  class="btn btn-default"  accept="image/*"  />-->
+                <!--<input type="submit" value="ImageUpload" class="btn btn-default" />-->
+            </div>
+            <div class="col-md-10">
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsPublished, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.IsPublished)
+                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Time, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Time, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Time, "", new { @class = "text-danger" })
+               @(Html.Kendo().EditorFor(model => model.Content)
+                .Encode(false)
+                .HtmlAttributes(new { style = "height:440px" })
+                .Resizable(resizable => resizable.Content(true).Toolbar(true))
+                .Value(Model.Content)
+                .ImageBrowser(imageBrowser => imageBrowser
+                    .Image("~/InformationFiles/" + infoId.ToString() + "/{0}")
+                    .Read("MyRead", "ImageBrowser", new { id = infoId })
+                    .Create("MyCreate", "ImageBrowser", new { id = infoId })
+                    .Destroy("MyDestroy", "ImageBrowser", new { id = infoId })
+                    .Upload("MyUpload", "ImageBrowser", new { id = infoId })
+                    .Thumbnail("MyThumbnail", "ImageBrowser", new { id = infoId })
+                    )
+                 )
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="保存" class="btn btn-default" />
             </div>
         </div>
     </div>

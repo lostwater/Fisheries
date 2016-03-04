@@ -25,6 +25,11 @@ namespace Fisheries.Controllers
 
         public ActionResult Index()
         {
+            var theUser = UserManager.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);
+            var theRoles = theUser.Roles;
+            var roles = RoleManager.Roles;
+
+
             if (User.IsInRole("Administrator"))
                 return View();
             else
@@ -209,7 +214,7 @@ namespace Fisheries.Controllers
                     //RoleManager.
                     var adminRoleId = RoleManager.FindByName("Administrator").Id;
                     if (_user.Roles.Any(r=>r.RoleId == adminRoleId))
-                        return RedirectToAction("Index", "Shops");
+                        return RedirectToAction("Index", "Home");
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);

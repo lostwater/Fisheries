@@ -20,8 +20,9 @@ namespace Fisheries.Models
         [Display(Name = "商品数量")]
         public int Quantity { get; set; }
 
-        // 0 = 待付款，1=已付款，2=取消，3=已使用
-        public int OrderStatu { get; set; }
+        
+        public int OrderStatuId { get; set; }
+        public OrderStatu OrderStatu { get; set; }
 
         public string Code { get; set; }
         public string PhoneNumber { get; set; }

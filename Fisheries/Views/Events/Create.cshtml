@@ -1,27 +1,9 @@
-﻿<script type="text/javascript" src="@Url.Content("/Scripts/bootstrap-datetimepicker.min.js")"></script>
-
-@model Fisheries.Models.Event
+﻿@model Fisheries.Models.Event
 
 @{
     ViewBag.Title = "Create";
 }
-<head>
-    <meta charset="utf-8">
-    <title>jQuery UI 日期选择器（Datepicker） - 默认功能</title>
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
-    <script src="~/Scripts/bootstrap-datepicker.min.js"></script>
-    <link rel="stylesheet" href="http://jqueryui.com/resources/demos/style.css">
-    <script>
-  $(function() {
-    $( "#datepicker" ).datepicker();
-  });
-  $(function () {
-      $("#datetimepicker").datetimepicker();
-  });
-    </script>
-</head>
+
 <h2>Create</h2>
 
 
@@ -44,8 +26,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.EventFrom, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.EventFrom, new { @class = "form-control datefield" })
-                <input type="text" id="datepicker">
+                @Html.EditorFor(model => model.EventFrom, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.EventFrom, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -78,34 +59,36 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
+                @(Html.Kendo().NumericTextBoxFor<decimal>(model => model.Price).Culture("zh-CN").Format("#.00").Min(0).Max(10000).Value(0).HtmlAttributes(new { style = "width: 100" }))
+                @*@Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })*@
                 @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.DiscountPrice, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DiscountPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @(Html.Kendo().NumericTextBoxFor<decimal>(model => model.DiscountPrice).Culture("zh-CN").Format("#.00").Min(0).Max(10000).Value(0).HtmlAttributes(new { style = "width: 100" }))
+                @*@Html.EditorFor(model => model.DiscountPrice, new { htmlAttributes = new { @class = "form-control" } })*@
                 @Html.ValidationMessageFor(model => model.DiscountPrice, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.OxygenTime, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -118,7 +101,8 @@
         <div class="form-group">
             @Html.LabelFor(model => model.BuyPrice, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.BuyPrice, new { htmlAttributes = new { @class = "form-control" } })
+                @(Html.Kendo().NumericTextBoxFor<decimal>(model => model.BuyPrice).Culture("zh-CN").Format("#.00").Min(0).Max(10000).Value(0).HtmlAttributes(new { style = "width: 100" }))
+                @*@Html.EditorFor(model => model.BuyPrice)*@
                 @Html.ValidationMessageFor(model => model.BuyPrice, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -134,18 +118,19 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Positions, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Positions, new { htmlAttributes = new { @class = "form-control" } })
+                @(Html.Kendo().NumericTextBoxFor<int>(model => model.Positions).Min(0).Max(10000).Value(0).Format("#").HtmlAttributes(new { style = "width: 100" }))
+                @*@Html.EditorFor(model => model.Positions, new { htmlAttributes = new { @class = "form-control" } })*@
                 @Html.ValidationMessageFor(model => model.Positions, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
+        @*<div class="form-group">
             @Html.LabelFor(model => model.PositionsRemain, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.PositionsRemain, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.PositionsRemain, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -164,7 +149,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ShopId, "ShopId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ShopId, "渔场", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("ShopId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ShopId, "", new { @class = "text-danger" })

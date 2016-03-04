@@ -112,7 +112,7 @@ namespace Fisheries.API
                 EventId = eventId,
                 OrderPrice = _event.Price,
                 OrderTime = DateTime.Now,
-                OrderStatu = 0,
+                OrderStatuId = 0,
                 Quantity = 1,
                 PhoneNumber = user.PhoneNumber,
                 ApplicationUserId = User.Identity.GetUserId()

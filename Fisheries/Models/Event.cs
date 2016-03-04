@@ -9,6 +9,8 @@ namespace Fisheries.Models
     {
         public int Id { get; set; }
 
+        public bool IsPublished { get; set; }
+
         [Display(Name = "放钓名称")]
         public string Name { get; set; }
 

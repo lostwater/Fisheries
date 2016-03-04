@@ -1,7 +1,7 @@
-﻿@model Fisheries.Models.InformationCreateModel
+﻿@model Fisheries.Models.Information
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "";
 }
 
 <h2>Create</h2>
@@ -16,6 +16,14 @@
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
+            @Html.LabelFor(model => model.InformationTypeId, "信息类型", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("InformationTypeId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.InformationTypeId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Title, new { htmlAttributes = new { @class = "form-control" } })
@@ -23,39 +31,19 @@
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.VideoUrl, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.VideoUrl, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.VideoUrl, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Intro, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.Image, new { type = "file" })
-                @Html.ValidationMessageFor(model => model.Image)
-                <!--<input type="file"  class="btn btn-default"  accept="image/*"  />--> 
-                <!--<input type="submit" value="ImageUpload" class="btn btn-default" />-->
-            </div>
-            <div class="col-md-10">
-                
+                @Html.EditorFor(model => model.Intro, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Intro, "", new { @class = "text-danger" })
             </div>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.Content, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Content, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Content, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="创建" class="btn btn-default" />
+                <label>"你将在下一页填写详细"</label>
             </div>
         </div>
     </div>

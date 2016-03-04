@@ -8,17 +8,26 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Fisheries.Models;
+using Microsoft.AspNet.Identity.Owin;
 
 namespace Fisheries.Controllers
 {
     public class OrdersController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+        }
+
 
         // GET: Orders
         public async Task<ActionResult> Index()
         {
-            var orders = db.Orders.Include(o => o.ApplicationUser).Include(o => o.Event).Include(o => o.Payment);
+            var orders = db.Orders.Include(o => o.ApplicationUser).Include(o => o.Event).Include(o => o.OrderStatu).Include(o => o.Payment);
             return View(await orders.ToListAsync());
         }
 
@@ -40,8 +49,9 @@ namespace Fisheries.Controllers
         // GET: Orders/Create
         public ActionResult Create()
         {
-            //ViewBag.ApplicationUserId = new SelectList(db.ApplicationUsers, "Id", "Avatar");
+            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "UserName");
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name");
+            ViewBag.OrderStatuId = new SelectList(db.OrderStatus, "Id", "Name");
             ViewBag.PaymentId = new SelectList(db.Payments, "Id", "Description");
             return View();
         }
@@ -51,17 +61,33 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,OrderTime,OrderPrice,Description,Quantity,OrderStatu,Code,PhoneNumber,EventId,PaymentId,ApplicationUserId")] Order order)
+        public async Task<ActionResult> Create([Bind(Include = "Id,OrderTime,OrderPrice,Description,Quantity,OrderStatuId,Code,PhoneNumber,EventId,PaymentId,ApplicationUserId")] Order order)
         {
             if (ModelState.IsValid)
             {
+                var _event = db.Events.Find(order.EventId);
+                if (_event.PositionsRemain == 0)
+                {
+                    ModelState.AddModelError("", "位置已订满");
+                    return View(order);
+                }
+                order.OrderTime = DateTime.Now;
+                order.OrderPrice = _event.Price;
+                order.OrderStatuId = 1;
+
+                //order.PhoneNumber;
+                
+                //order.PhoneNumber;
+                _event.PositionsRemain = _event.Positions - db.Orders.Count(o => o.EventId == _event.Id && o.OrderStatuId != 4) - 1;
                 db.Orders.Add(order);
+
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            //ViewBag.ApplicationUserId = new SelectList(db.ApplicationUsers, "Id", "Avatar", order.ApplicationUserId);
+            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "UserName", order.ApplicationUserId);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", order.EventId);
+            ViewBag.OrderStatuId = new SelectList(db.OrderStatus, "Id", "Name", order.OrderStatuId);
             ViewBag.PaymentId = new SelectList(db.Payments, "Id", "Description", order.PaymentId);
             return View(order);
         }
@@ -78,8 +104,9 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
-            //ViewBag.ApplicationUserId = new SelectList(db.ApplicationUsers, "Id", "Avatar", order.ApplicationUserId);
+            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "UserName", order.ApplicationUserId);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", order.EventId);
+            ViewBag.OrderStatuId = new SelectList(db.OrderStatus, "Id", "Name", order.OrderStatuId);
             ViewBag.PaymentId = new SelectList(db.Payments, "Id", "Description", order.PaymentId);
             return View(order);
         }
@@ -89,7 +116,7 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,OrderTime,OrderPrice,Description,Quantity,OrderStatu,Code,PhoneNumber,EventId,PaymentId,ApplicationUserId")] Order order)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,OrderTime,OrderPrice,Description,Quantity,OrderStatuId,Code,PhoneNumber,EventId,PaymentId,ApplicationUserId")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -97,8 +124,9 @@ namespace Fisheries.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-           // ViewBag.ApplicationUserId = new SelectList(db.ApplicationUsers, "Id", "Avatar", order.ApplicationUserId);
+            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "UserName", order.ApplicationUserId);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", order.EventId);
+            ViewBag.OrderStatuId = new SelectList(db.OrderStatus, "Id", "Name", order.OrderStatuId);
             ViewBag.PaymentId = new SelectList(db.Payments, "Id", "Description", order.PaymentId);
             return View(order);
         }
