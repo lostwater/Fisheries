@@ -32,7 +32,10 @@ namespace Fisheries.API
        
 
         private const string LocalLoginProvider = "Local";
+
+        private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
 
         private string validPhone { get; set; }
         private string validCode { get; set; }
@@ -48,6 +51,18 @@ namespace Fisheries.API
             AccessTokenFormat = accessTokenFormat;
         }
 
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? Request.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
         public ApplicationUserManager UserManager
         {
             get
@@ -57,6 +72,18 @@ namespace Fisheries.API
             private set
             {
                 _userManager = value;
+            }
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return Request.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
             }
         }
 
@@ -338,11 +365,21 @@ namespace Fisheries.API
             {
                 return BadRequest(ModelState);
             }
+            if(model.PhoneNumber != validPhone || model.VerifyCode != validCode)
+            {
+                //return BadRequest("验证码无效");
+            }
 
             var user = new ApplicationUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber };
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
+            if (!RoleManager.RoleExists("Buyer"))
+            {
+                RoleManager.Create(new ApplicationRole("Buyer"));
+            }
+            var role = RoleManager.FindByName("Buyer");
+            await UserManager.AddToRoleAsync(UserManager.FindByName(user.UserName).Id, role.Name);
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -357,8 +394,12 @@ namespace Fisheries.API
         {
             Random rad = new Random();
             var verifyCode = rad.Next(1000, 10000).ToString();
-            if (await SMSSender.SendVerifyCode(phoneNumber, verifyCode))
+            if (await IHuiYiSMS.SendVerifyCode(phoneNumber, verifyCode))
+            {
+                validCode = verifyCode;
+                validPhone = phoneNumber;
                 return Ok();
+            }
             else
                 return BadRequest();
         }

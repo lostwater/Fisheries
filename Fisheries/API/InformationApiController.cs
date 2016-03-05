@@ -13,6 +13,7 @@ using Fisheries.Models;
 
 namespace Fisheries.API
 {
+    [RoutePrefix("api/Information")]
     public class InformationApiController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -20,7 +21,8 @@ namespace Fisheries.API
         // GET: api/InformationApi
         public IQueryable<Information> GetInformation()
         {
-            return db.Information;
+            return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType);
+
         }
 
         // GET: api/InformationApi/5

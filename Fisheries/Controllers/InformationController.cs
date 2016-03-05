@@ -72,7 +72,7 @@ namespace Fisheries.Controllers
                 if (!Directory.Exists(Server.MapPath(path)))
                     Directory.CreateDirectory(Server.MapPath(path));
                 //model.Image.SaveAs(path);     
-                return RedirectToAction("DetailAndPub", information.Id);
+                return RedirectToAction("Edit", information.Id);
             }
             ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
             return View(model);
@@ -111,10 +111,10 @@ namespace Fisheries.Controllers
                 {
                     var fileName = Path.GetFileName(model.Image.FileName);
                     var path = "~/InformationFiles/" + model.Id.ToString() + "/ ";
-                    path = Server.MapPath(path);
-                    if (!Directory.Exists(path))
-                        Directory.CreateDirectory(path);
-                    model.Image.SaveAs(path + fileName);
+                    //path =;
+                    if (!Directory.Exists(Server.MapPath(path)))
+                        Directory.CreateDirectory(Server.MapPath(path));
+                    model.Image.SaveAs(Server.MapPath(path) + fileName);
                     _information.ImageUrl = path + fileName;
                 }
                 //var content = 

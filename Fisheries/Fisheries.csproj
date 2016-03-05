@@ -212,10 +212,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\AdsApiController.cs" />
     <Compile Include="API\EventsApiController.cs" />
     <Compile Include="API\InformationApiController.cs" />
+    <Compile Include="App_Start\AuthRepository.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\OAuth.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\IdentityConfig.cs" />
@@ -268,17 +271,14 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\CalendarExtensions.cs" />
+    <Compile Include="Helper\MobSMS.cs" />
     <Compile Include="Helper\SMSSender.cs" />
-    <Compile Include="Migrations\201603041150568_Init.cs" />
-    <Compile Include="Migrations\201603041150568_Init.Designer.cs">
-      <DependentUpon>201603041150568_Init.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Ad.cs" />
     <Compile Include="Models\ApplicationDbContext.cs" />
     <Compile Include="Models\ApplicationRole.cs" />
+    <Compile Include="Models\Client.cs" />
     <Compile Include="Models\CustomerViewModels.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\IdentityManager.cs" />
@@ -1702,11 +1702,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603041150568_Init.resx">
-      <DependentUpon>201603041150568_Init.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

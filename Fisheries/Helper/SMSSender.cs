@@ -11,7 +11,7 @@ using System.Web.Http;
 
 namespace Fisheries.Helper
 {
-    public class SMSSender
+    public class IHuiYiSMS
     {
         public static string PostUrl = ConfigurationManager.AppSettings["WebReference.Service.PostUrl"];
         static public async Task<bool> SendVerifyCode(string phoneNumber, string verifyCode)

@@ -13,45 +13,44 @@ using Fisheries.Models;
 
 namespace Fisheries.API
 {
-    [RoutePrefix("api/Events")]
-    public class EventsApiController : ApiController
+    public class AdsApiController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: api/EventsApi
-        public IQueryable<Event> GetEvents()
+        // GET: api/AdsApi
+        public IQueryable<Ad> GetAds()
         {
-            return db.Events;
+            return db.Ads;
         }
 
-        // GET: api/EventsApi/5
-        [ResponseType(typeof(Event))]
-        public async Task<IHttpActionResult> GetEvent(int id)
+        // GET: api/AdsApi/5
+        [ResponseType(typeof(Ad))]
+        public async Task<IHttpActionResult> GetAd(int id)
         {
-            Event @event = await db.Events.FindAsync(id);
-            if (@event == null)
+            Ad ad = await db.Ads.FindAsync(id);
+            if (ad == null)
             {
                 return NotFound();
             }
 
-            return Ok(@event);
+            return Ok(ad);
         }
 
-        // PUT: api/EventsApi/5
+        // PUT: api/AdsApi/5
         [ResponseType(typeof(void))]
-        public async Task<IHttpActionResult> PutEvent(int id, Event @event)
+        public async Task<IHttpActionResult> PutAd(int id, Ad ad)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != @event.Id)
+            if (id != ad.Id)
             {
                 return BadRequest();
             }
 
-            db.Entry(@event).State = EntityState.Modified;
+            db.Entry(ad).State = EntityState.Modified;
 
             try
             {
@@ -59,7 +58,7 @@ namespace Fisheries.API
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EventExists(id))
+                if (!AdExists(id))
                 {
                     return NotFound();
                 }
@@ -72,35 +71,35 @@ namespace Fisheries.API
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/EventsApi
-        [ResponseType(typeof(Event))]
-        public async Task<IHttpActionResult> PostEvent(Event @event)
+        // POST: api/AdsApi
+        [ResponseType(typeof(Ad))]
+        public async Task<IHttpActionResult> PostAd(Ad ad)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Events.Add(@event);
+            db.Ads.Add(ad);
             await db.SaveChangesAsync();
 
-            return CreatedAtRoute("DefaultApi", new { id = @event.Id }, @event);
+            return CreatedAtRoute("DefaultApi", new { id = ad.Id }, ad);
         }
 
-        // DELETE: api/EventsApi/5
-        [ResponseType(typeof(Event))]
-        public async Task<IHttpActionResult> DeleteEvent(int id)
+        // DELETE: api/AdsApi/5
+        [ResponseType(typeof(Ad))]
+        public async Task<IHttpActionResult> DeleteAd(int id)
         {
-            Event @event = await db.Events.FindAsync(id);
-            if (@event == null)
+            Ad ad = await db.Ads.FindAsync(id);
+            if (ad == null)
             {
                 return NotFound();
             }
 
-            db.Events.Remove(@event);
+            db.Ads.Remove(ad);
             await db.SaveChangesAsync();
 
-            return Ok(@event);
+            return Ok(ad);
         }
 
         protected override void Dispose(bool disposing)
@@ -112,9 +111,9 @@ namespace Fisheries.API
             base.Dispose(disposing);
         }
 
-        private bool EventExists(int id)
+        private bool AdExists(int id)
         {
-            return db.Events.Count(e => e.Id == id) > 0;
+            return db.Ads.Count(e => e.Id == id) > 0;
         }
     }
 }
