@@ -38,6 +38,8 @@ namespace Fisheries.Models
 
         public System.Data.Entity.DbSet<Fisheries.Models.Ad> Ads { get; set; }
 
+        public System.Data.Entity.DbSet<Fisheries.Models.Celebrity> Celebrities { get; set; }
+
         //public System.Data.Entity.DbSet<Client> Clients { get; set; }
 
         // public System.Data.Entity.DbSet<Fisheries.Models.ApplicationUser> ApplicationUsers { get; set; }

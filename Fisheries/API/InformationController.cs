@@ -14,7 +14,7 @@ using Fisheries.Models;
 namespace Fisheries.API
 {
     [RoutePrefix("api/Information")]
-    public class InformationApiController : ApiController
+    public class InformationController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
@@ -22,6 +22,29 @@ namespace Fisheries.API
         public IQueryable<Information> GetInformation()
         {
             return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType);
+
+        }
+
+        [HttpGet]
+        [Route("CeleberityInfomation")]
+        public IQueryable<Information> CeleberityInfomation(int id)
+        {
+            return  db.Information.Where(i=>i.CelebrityId == id).OrderByDescending(i => i.Id).Include(i => i.InformationType);
+        }
+
+        [HttpGet]
+        [Route("News")]
+        public IQueryable<Information> News()
+        {
+            return db.Information.Where(i => i.InformationTypeId == 1).OrderByDescending(i => i.Id).Include(i => i.InformationType);
+
+        }
+
+        [HttpGet]
+        [Route("Others")]
+        public IQueryable<Information> Others()
+        {
+            return db.Information.Where(i=>i.InformationTypeId!=1).OrderByDescending(i => i.Id).Include(i => i.InformationType);
 
         }
 

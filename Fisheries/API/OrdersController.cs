@@ -10,19 +10,27 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Fisheries.Models;
 using Microsoft.AspNet.Identity.Owin;
+using Fisheries.Helper;
 
 namespace Fisheries.API
 {
-    [Authorize]
+    [Authorize(Roles = "Administrator,Seller,Buyer")]
     [RoutePrefix("api/Orders")]
-    public class OrdersApiController : ApiController
+    public class OrdersController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/BuyerOrders
-        public IQueryable<Order> GetOrders()
+        [ResponseType(typeof(IQueryable<Order>))]
+        public async Task<IHttpActionResult> GetOrders()
         {
-            return db.Orders;
+            if (!User.Identity.IsAuthenticated)
+                return BadRequest();
+            else
+            {
+                var userId = User.Identity.GetUserId();
+                return Ok(await db.Orders.Where(o => o.ApplicationUserId == userId).Include(o => o.Event).Include(o => o.Event.Shop).Include(o =>o.Payment).ToListAsync());
+            }
         }
 
         // GET: api/BuyerOrders/5
@@ -34,9 +42,11 @@ namespace Fisheries.API
             {
                 return NotFound();
             }
-
+            order = await db.Orders.Include(o => o.Event).Include(o=>o.Event.Shop).Include(o => o.Payment).FirstAsync(o => o.Id == id);
             return Ok(order);
         }
+
+
 
         // PUT: api/BuyerOrders/5
         [ResponseType(typeof(void))]
@@ -89,7 +99,7 @@ namespace Fisheries.API
         }
 
         // POST: api/Orders/CreateOrder
-        [Route("CreateOrder")]
+        [Route("CreateOrder/{eventId}")]
         [ResponseType(typeof(Order))]
         public async Task<IHttpActionResult> CreateOrder(int eventId)
         {
@@ -104,15 +114,16 @@ namespace Fisheries.API
             }
             if (_event.PositionsRemain == 0)
             {
-                return BadRequest("");
+                return BadRequest("已无剩余钓位");
             }
+            //User.Identity.GetUserName
             var user = Request.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
             var order = new Order()
             {
                 EventId = eventId,
                 OrderPrice = _event.Price,
                 OrderTime = DateTime.Now,
-                OrderStatuId = 0,
+                OrderStatuId = 1,
                 Quantity = 1,
                 PhoneNumber = user.PhoneNumber,
                 ApplicationUserId = User.Identity.GetUserId()
@@ -124,6 +135,32 @@ namespace Fisheries.API
             return Ok(order);
         }
 
+        [Route("SendPayment/{id}")]
+        [ResponseType(typeof(Order))]
+        public async Task<IHttpActionResult> SendPayment(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var order = db.Orders.Find(id);
+            if (order == null)
+            {
+                return BadRequest();
+            }
+            order = db.Orders.Include(o => o.Event).First(o => o.Id == id);
+            //Check the payment
+            if (true)
+            {//
+                //var user = Request.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
+                Random rad = new Random();
+                var verifyCode = rad.Next(100000, 1000000).ToString();
+                order.Code = verifyCode;
+                await IHuiYiSMS.SendVerifyCode(order.PhoneNumber, verifyCode);
+                await db.SaveChangesAsync();
+            }
+            return Ok(order);
+        }
 
         // DELETE: api/BuyerOrders/5
         [ResponseType(typeof(Order))]

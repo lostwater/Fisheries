@@ -22,6 +22,11 @@ namespace Fisheries.Controllers
             return View(await db.Information.ToListAsync());
         }
 
+        public async Task<ActionResult> Celebrity(int? id)
+        {
+            return View(await db.Information.Where(i=>i.CelebrityId == id).ToListAsync());
+        }
+
         // GET: Information/Details/5
         public async Task<ActionResult> Details(int? id)
         {
@@ -40,7 +45,7 @@ namespace Fisheries.Controllers
         // GET: Information/Create
         public ActionResult Create()
         {
-            ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name");
+            ViewBag.InformationTypeId = new SelectList(db.InformationTypes.Where(i=>i.Id!=2), "Id", "Name");
             //ViewBag.ApplicationUserId = new SelectList(db.InformationType.Where(u => u.Roles.Any(r => r.RoleId == roleId)), "Id", "UserName");
             return View();
         }
@@ -72,7 +77,48 @@ namespace Fisheries.Controllers
                 if (!Directory.Exists(Server.MapPath(path)))
                     Directory.CreateDirectory(Server.MapPath(path));
                 //model.Image.SaveAs(path);     
-                return RedirectToAction("Edit", information.Id);
+                return RedirectToAction("Edit",new { id = information.Id });
+            }
+            ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
+            return View(model);
+        }
+
+        public ActionResult CreateForCelebrity(int? id)
+        {
+            ViewBag.InformationTypeId = new SelectList(db.InformationTypes.Where(i => i.Id == 2), "Id", "Name");
+            //ViewBag.ApplicationUserId = new SelectList(db.InformationType.Where(u => u.Roles.Any(r => r.RoleId == roleId)), "Id", "UserName");
+            return View();
+        }
+
+        // POST: Information/Create
+        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
+        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CreateForCelebrity(int? id, Information model)
+        {
+            if (ModelState.IsValid)
+            {
+                var information = new Information()
+                {
+                    Title = model.Title,
+                    VideoUrl = model.VideoUrl,
+                    Intro = model.Intro,
+                    CreatedTime = DateTime.Now,
+                    InformationTypeId = model.InformationTypeId,
+                    IsPublished = false,
+                    CelebrityId = id,
+                };
+                db.Information.Add(information);
+                await db.SaveChangesAsync();
+
+                //var fileName = Path.GetFileName(model.Image.FileName);
+                //fileName = DateTime.Now.Ticks.ToString() + fileName;
+                var path = Path.Combine("~/InformationFiles/", information.Id.ToString());
+                if (!Directory.Exists(Server.MapPath(path)))
+                    Directory.CreateDirectory(Server.MapPath(path));
+                //model.Image.SaveAs(path);     
+                return RedirectToAction("Edit", new { id = information.Id });
             }
             ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
             return View(model);
@@ -110,12 +156,13 @@ namespace Fisheries.Controllers
                 if (model.Image != null)
                 {
                     var fileName = Path.GetFileName(model.Image.FileName);
-                    var path = "~/InformationFiles/" + model.Id.ToString() + "/ ";
+                    var path = "~/InformationFiles/" + model.Id.ToString() + "/";     
                     //path =;
                     if (!Directory.Exists(Server.MapPath(path)))
                         Directory.CreateDirectory(Server.MapPath(path));
-                    model.Image.SaveAs(Server.MapPath(path) + fileName);
-                    _information.ImageUrl = path + fileName;
+                    var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
+                    model.Image.SaveAs(phyicsPath);
+                    _information.ImageUrl = Url.Content(Path.Combine(path, fileName));
                 }
                 //var content = 
                 

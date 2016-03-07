@@ -30,9 +30,14 @@ namespace Fisheries.Models
 
         [Display(Name = "是否发布")]
         public bool IsPublished { get; set; }
+
         [Display(Name = "信息类型")]
         public int InformationTypeId { get; set; }
         public InformationType InformationType { get; set; }
+
+        [Display(Name = "名人")]
+        public int? CelebrityId { get; set; }
+        public virtual Celebrity Celebrity { get; set; }
     }
 
     public class InformationEditModel
@@ -66,6 +71,10 @@ namespace Fisheries.Models
         [Display(Name = "主图片")]
         public HttpPostedFileBase Image { get; set; }
 
+        [Display(Name = "名人")]
+        public int? CelebrityId { get; set; }
+        public virtual Celebrity Celebrity { get; set; }
+
         public InformationEditModel()
         { }
 
@@ -81,6 +90,7 @@ namespace Fisheries.Models
             this.Title = information.Title;
             this.Intro = information.Intro;
             this.IsPublished = information.IsPublished;
+            this.CelebrityId = information.CelebrityId;
         }
      }
 

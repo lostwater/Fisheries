@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Net;
 using Fisheries.Models;
-
+using System.IO;
 
 namespace Fisheries.Controllers
 {
@@ -83,7 +83,7 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,EventFrom,EvenUntil,RegeristFrom,RegeristUntil,Price,DiscountPrice,OxygenTime,BuyPrice,FishType,Positions,Description,Intro,ShopId")] Event @event)
+        public async Task<ActionResult> Create( Event @event, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
@@ -91,6 +91,20 @@ namespace Fisheries.Controllers
                 
                 db.Events.Add(@event);
                 await db.SaveChangesAsync();
+
+                var fileName = Path.GetFileName(image.FileName);
+                var path = "~/Event/" + @event.Id.ToString() + "/";
+                //path =;
+                if (!Directory.Exists(Server.MapPath(path)))
+                    Directory.CreateDirectory(Server.MapPath(path));
+
+                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
+                image.SaveAs(phyicsPath);
+
+                @event.AvatarUrl = Url.Content(Path.Combine(path, fileName));
+
+                await db.SaveChangesAsync();
+
                 return RedirectToAction("Index");
             }
 

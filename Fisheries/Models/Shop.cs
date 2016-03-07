@@ -9,8 +9,11 @@ namespace Fisheries.Models
     public class Shop
     {
         public int Id { get; set; }
+        
         [Display(Name = "名称")]
         public string Name { get; set; }
+        [Display(Name = "渔场图地址")]
+        public string AvatarUrl { get; set; }
         [Display(Name = "地址")]
         public string Address { get; set; }
         [Display(Name = "介绍")]

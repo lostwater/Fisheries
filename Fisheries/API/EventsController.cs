@@ -9,19 +9,26 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.OAuth;
 using Fisheries.Models;
+
 
 namespace Fisheries.API
 {
     [RoutePrefix("api/Events")]
-    public class EventsApiController : ApiController
+    public class EventsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/EventsApi
         public IQueryable<Event> GetEvents()
         {
-            return db.Events;
+            return db.Events.Include(e => e.Shop);
         }
 
         // GET: api/EventsApi/5
@@ -35,6 +42,19 @@ namespace Fisheries.API
             }
 
             return Ok(@event);
+        }
+
+        [HttpGet]
+        [Route("isOrdered/{id}")]
+        //[ResponseType(typeof(bool))]
+        public async Task<IHttpActionResult> isOrdered(int id)
+        {
+            var theuserid = User.Identity.GetUserId();
+            if (await db.Orders.AnyAsync(o => o.EventId == id && o.OrderStatuId != 4 && o.ApplicationUserId == theuserid))
+               
+                return Ok(true);
+            else
+                return Ok(false);
         }
 
         // PUT: api/EventsApi/5

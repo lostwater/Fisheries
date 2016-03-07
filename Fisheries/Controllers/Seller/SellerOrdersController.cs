@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
+
 using Fisheries.Models;
 
 namespace Fisheries.Controllers.Seller
@@ -18,7 +22,13 @@ namespace Fisheries.Controllers.Seller
         // GET: SellerOrders
         public async Task<ActionResult> Index()
         {
-            var orders = db.Orders.Include(o => o.ApplicationUser).Include(o => o.Event).Include(o => o.OrderStatu).Include(o => o.Payment);
+            var userId = User.Identity.GetUserId();
+            var orders = db.Orders.Include(o => o.ApplicationUser)
+                .Include(o => o.Event)
+                .Include(o=>o.Event.Shop)
+                .Include(o => o.OrderStatu)
+                .Include(o => o.Payment)
+                .Where(o => o.Event.Shop.ApplicationUserId == userId);
             return View(await orders.ToListAsync());
         }
 
@@ -59,12 +69,12 @@ namespace Fisheries.Controllers.Seller
             {
                 var order = await db.Orders.FirstOrDefaultAsync(o => o.PhoneNumber == model.PhoneNumber
                     && o.Code == model.Code
-                    && o.OrderStatuId == 1
+                    && o.OrderStatuId == 2
                     && !string.IsNullOrEmpty(o.Code)
                 );
                 if (order != null)
                 {
-                    order.OrderStatuId = 2;
+                    order.OrderStatuId = 3;
                     var result = await db.SaveChangesAsync();
                     if(result>0)
                         return RedirectToAction("Index");

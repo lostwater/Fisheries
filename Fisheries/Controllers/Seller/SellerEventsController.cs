@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+
 using Fisheries.Models;
+using System.IO;
 
 namespace Fisheries.Seller.Controllers
 {
@@ -18,7 +21,10 @@ namespace Fisheries.Seller.Controllers
         // GET: SellerEvents
         public async Task<ActionResult> Index()
         {
-            var events = db.Events.Include(e => e.Shop);
+            var userId = User.Identity.GetUserId();
+            var events = db.Events
+                .Where(e=>e.Shop.ApplicationUserId == userId)
+                .Include(e => e.Shop);
             return View(await events.ToListAsync());
         }
 
@@ -40,7 +46,8 @@ namespace Fisheries.Seller.Controllers
         // GET: SellerEvents/Create
         public ActionResult Create()
         {
-            ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name");
+            var userId = User.Identity.GetUserId();
+            ViewBag.ShopId = new SelectList(db.Shops.Where(s => s.ApplicationUserId == userId), "Id", "Name");
             return View();
         }
 
@@ -49,24 +56,37 @@ namespace Fisheries.Seller.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name,EventFrom,EvenUntil,RegeristFrom,RegeristUntil,Price,DiscountPrice,OxygenTime,BuyPrice,FishType,FishQuantity,Positions,Description,Intro")] Event @event)
+        public async Task<ActionResult> Create(Event @event, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
-                var shop = db.Shops.FirstOrDefault(s => s.ApplicationUser.UserName == User.Identity.Name);
-                if(shop == null)
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-                }
-
                 @event.PositionsRemain = @event.Positions;
-                @event.ShopId = shop.Id;
+
                 db.Events.Add(@event);
                 await db.SaveChangesAsync();
+
+                var fileName = Path.GetFileName(image.FileName);
+                var path = "~/Event/" + @event.Id.ToString() + "/";
+                //path =;
+                if (!Directory.Exists(Server.MapPath(path)))
+                    Directory.CreateDirectory(Server.MapPath(path));
+
+                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
+                image.SaveAs(phyicsPath);
+
+                @event.AvatarUrl = Url.Content(Path.Combine(path, fileName));
+
+                await db.SaveChangesAsync();
+
                 return RedirectToAction("Index");
             }
 
-            //ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
+            ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
+            if (User.IsInRole("Seller"))
+            {
+                var userId = User.Identity.GetUserId();
+                ViewBag.ShopId = new SelectList(db.Shops.Where(s => s.ApplicationUserId == userId), "Id", "Name", @event.ShopId);
+            }
             return View(@event);
         }
 

@@ -13,14 +13,23 @@ using Fisheries.Models;
 
 namespace Fisheries.API
 {
-    public class AdsApiController : ApiController
+    [RoutePrefix("api/Ads")]
+    public class AdsController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/AdsApi
-        public IQueryable<Ad> GetAds()
+        public IQueryable<Event> GetAds()
         {
-            return db.Ads;
+            return db.Ads.Select(a => a.Event);
+        }
+
+        [HttpGet]
+        [Route("Events")]
+        public IQueryable<Event> Events()
+        {
+            var events = db.Ads.Select(a => a.Event).Include(e => e.Shop);
+            return events;
         }
 
         // GET: api/AdsApi/5

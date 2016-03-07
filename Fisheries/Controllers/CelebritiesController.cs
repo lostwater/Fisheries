@@ -8,117 +8,132 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Fisheries.Models;
+using System.IO;
 
 namespace Fisheries.Controllers
 {
-    public class AdsController : Controller
+    public class CelebritiesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Ads
+        // GET: Celebrities
         public async Task<ActionResult> Index()
         {
-            var ads = db.Ads.Include(a => a.Event);
-            return View(await ads.ToListAsync());
+            return View(await db.Celebrities.ToListAsync());
         }
 
-        
-
-        // GET: Ads/Details/5
+        // GET: Celebrities/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ad ad = await db.Ads.FindAsync(id);
-            if (ad == null)
+            Celebrity celebrity = await db.Celebrities.FindAsync(id);
+            if (celebrity == null)
             {
                 return HttpNotFound();
             }
-            return View(ad);
+            return View(celebrity);
         }
 
-        // GET: Ads/Create
+        // GET: Celebrities/Create
         public ActionResult Create()
         {
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name");
             return View();
         }
 
-        // POST: Ads/Create
+        // POST: Celebrities/Create
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,EventId")] Ad ad)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name")] Celebrity celebrity, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
-                db.Ads.Add(ad);
+                db.Celebrities.Add(celebrity);
                 await db.SaveChangesAsync();
+
+                var fileName = Path.GetFileName(image.FileName);
+                var path = "~/Celebrity/" + celebrity.Id.ToString() + "/";
+                if (!Directory.Exists(Server.MapPath(path)))
+                    Directory.CreateDirectory(Server.MapPath(path));
+
+                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
+                image.SaveAs(phyicsPath);
+
+                celebrity.AvatarUrl = Url.Content(Path.Combine(path, fileName));
+
                 return RedirectToAction("Index");
             }
 
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            return View(ad);
+            return View(celebrity);
         }
 
-        // GET: Ads/Edit/5
+        // GET: Celebrities/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ad ad = await db.Ads.FindAsync(id);
-            if (ad == null)
+            Celebrity celebrity = await db.Celebrities.FindAsync(id);
+            if (celebrity == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            return View(ad);
+            return View(celebrity);
         }
 
-        // POST: Ads/Edit/5
+        // POST: Celebrities/Edit/5
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,EventId")] Ad ad)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name")] Celebrity celebrity, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ad).State = EntityState.Modified;
+                
+                var fileName = Path.GetFileName(image.FileName);
+                var path = "~/Celebrity/" + celebrity.Id.ToString() + "/";
+                if (!Directory.Exists(Server.MapPath(path)))
+                    Directory.CreateDirectory(Server.MapPath(path));
+
+                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
+                image.SaveAs(phyicsPath);
+
+                celebrity.AvatarUrl = Url.Content(Path.Combine(path, fileName));
+                db.Entry(celebrity).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            return View(ad);
+            return View(celebrity);
         }
 
-        // GET: Ads/Delete/5
+        // GET: Celebrities/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ad ad = await db.Ads.FindAsync(id);
-            if (ad == null)
+            Celebrity celebrity = await db.Celebrities.FindAsync(id);
+            if (celebrity == null)
             {
                 return HttpNotFound();
             }
-            return View(ad);
+            return View(celebrity);
         }
 
-        // POST: Ads/Delete/5
+        // POST: Celebrities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Ad ad = await db.Ads.FindAsync(id);
-            db.Ads.Remove(ad);
+            Celebrity celebrity = await db.Celebrities.FindAsync(id);
+            db.Celebrities.Remove(celebrity);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }
