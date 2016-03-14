@@ -11,118 +11,107 @@ using Fisheries.Models;
 
 namespace Fisheries.Controllers
 {
-    public class AdsController : Controller
+    public class InformationTypesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Ads
+        // GET: InformationTypes
         public async Task<ActionResult> Index()
         {
-            var ads = db.Ads.Include(a => a.Event);
-            return View(await ads.ToListAsync());
+            return View(await db.InformationTypes.ToListAsync());
         }
 
-        
-
-        // GET: Ads/Details/5
+        // GET: InformationTypes/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ad ad = await db.Ads.FindAsync(id);
-            if (ad == null)
+            InformationType informationType = await db.InformationTypes.FindAsync(id);
+            if (informationType == null)
             {
                 return HttpNotFound();
             }
-            return View(ad);
+            return View(informationType);
         }
 
-        // GET: Ads/Create
+        // GET: InformationTypes/Create
         public ActionResult Create()
         {
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name");
-            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title");
             return View();
         }
 
-        // POST: Ads/Create
+        // POST: InformationTypes/Create
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Ad ad)
+        public async Task<ActionResult> Create([Bind(Include = "Id,Name")] InformationType informationType)
         {
             if (ModelState.IsValid)
             {
-                db.Ads.Add(ad);
+                db.InformationTypes.Add(informationType);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title",ad.InformationId);
-            return View(ad);
+            return View(informationType);
         }
 
-        // GET: Ads/Edit/5
+        // GET: InformationTypes/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ad ad = await db.Ads.FindAsync(id);
-            if (ad == null)
+            InformationType informationType = await db.InformationTypes.FindAsync(id);
+            if (informationType == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
-            return View(ad);
+            return View(informationType);
         }
 
-        // POST: Ads/Edit/5
+        // POST: InformationTypes/Edit/5
         // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit( Ad ad)
+        public async Task<ActionResult> Edit([Bind(Include = "Id,Name")] InformationType informationType)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(ad).State = EntityState.Modified;
+                db.Entry(informationType).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
-            return View(ad);
+            return View(informationType);
         }
 
-        // GET: Ads/Delete/5
+        // GET: InformationTypes/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Ad ad = await db.Ads.FindAsync(id);
-            if (ad == null)
+            InformationType informationType = await db.InformationTypes.FindAsync(id);
+            if (informationType == null)
             {
                 return HttpNotFound();
             }
-            return View(ad);
+            return View(informationType);
         }
 
-        // POST: Ads/Delete/5
+        // POST: InformationTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Ad ad = await db.Ads.FindAsync(id);
-            db.Ads.Remove(ad);
+            InformationType informationType = await db.InformationTypes.FindAsync(id);
+            db.InformationTypes.Remove(informationType);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
         }

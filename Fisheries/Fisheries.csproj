@@ -269,6 +269,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ImageBrowserController.cs" />
     <Compile Include="Controllers\InformationController.cs" />
+    <Compile Include="Controllers\InformationTypesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MeController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
@@ -299,6 +300,10 @@
     <Compile Include="Migrations\201603051942375_Init3.cs" />
     <Compile Include="Migrations\201603051942375_Init3.Designer.cs">
       <DependentUpon>201603051942375_Init3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201603140805040_Init4.cs" />
+    <Compile Include="Migrations\201603140805040_Init4.Designer.cs">
+      <DependentUpon>201603140805040_Init4.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -1724,6 +1729,11 @@
     <Content Include="Views\Celebrities\Index.cshtml" />
     <Content Include="Views\Information\CreateForCelebrity.cshtml" />
     <Content Include="Views\Information\Celebrity.cshtml" />
+    <Content Include="Views\InformationTypes\Create.cshtml" />
+    <Content Include="Views\InformationTypes\Delete.cshtml" />
+    <Content Include="Views\InformationTypes\Details.cshtml" />
+    <Content Include="Views\InformationTypes\Edit.cshtml" />
+    <Content Include="Views\InformationTypes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -1751,6 +1761,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603051942375_Init3.resx">
       <DependentUpon>201603051942375_Init3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201603140805040_Init4.resx">
+      <DependentUpon>201603140805040_Init4.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

@@ -28,8 +28,16 @@ namespace Fisheries.API
         [Route("Events")]
         public IQueryable<Event> Events()
         {
-            var events = db.Ads.Select(a => a.Event).Include(e => e.Shop);
+            var events = db.Ads.Where(a=>a.Event!=null).Select(a => a.Event).Include(e => e.Shop);
             return events;
+        }
+
+        [HttpGet]
+        [Route("Information")]
+        public IQueryable<Information> Information()
+        {
+            var information = db.Ads.Where(a => a.Information != null).Select(a => a.Information).Include(i => i.Celebrity);
+            return information;
         }
 
         // GET: api/AdsApi/5

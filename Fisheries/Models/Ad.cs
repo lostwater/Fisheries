@@ -9,7 +9,9 @@ namespace Fisheries.Models
     {
         public int Id { get; set; }
         public string AvatarUrl { get; set; }
-        public int EventId { get; set; }
-        public Event Event { get; set; }
+        public int? EventId { get; set; }
+        public virtual Event Event { get; set; }
+        public int? InformationId { get; set; }
+        public virtual Information Information { get; set; }
     }
 }

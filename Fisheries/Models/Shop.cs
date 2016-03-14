@@ -18,9 +18,11 @@ namespace Fisheries.Models
         public string Address { get; set; }
         [Display(Name = "介绍")]
         public string Intro { get; set; }
-
         [Display(Name = "描述")]
         public string Description { get; set; }
+
+        [Display(Name = "是否已认证")]
+        public bool Verified { get; set; }
 
         [Display(Name = "商家用户ID")]
         public string ApplicationUserId { get; set; }
