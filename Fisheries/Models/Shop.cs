@@ -20,7 +20,8 @@ namespace Fisheries.Models
         public string Intro { get; set; }
         [Display(Name = "描述")]
         public string Description { get; set; }
-
+        [Display(Name = "面积")]
+        public decimal Surface { get; set; }
         [Display(Name = "是否已认证")]
         public bool Verified { get; set; }
 

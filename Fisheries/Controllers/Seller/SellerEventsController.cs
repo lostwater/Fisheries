@@ -11,6 +11,7 @@ using Microsoft.AspNet.Identity;
 
 using Fisheries.Models;
 using System.IO;
+using System.Web.Helpers;
 
 namespace Fisheries.Seller.Controllers
 {
@@ -56,41 +57,26 @@ namespace Fisheries.Seller.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Event @event, HttpPostedFileBase image)
+        public async Task<ActionResult> Create(Event @event)
         {
             if (ModelState.IsValid)
             {
-                @event.PositionsRemain = @event.Positions;
-
+                @event.RegeristFrom = DateTime.Now;
                 db.Events.Add(@event);
                 await db.SaveChangesAsync();
 
-                var fileName = Path.GetFileName(image.FileName);
-                var path = "~/Event/" + @event.Id.ToString() + "/";
-                //path =;
-                if (!Directory.Exists(Server.MapPath(path)))
-                    Directory.CreateDirectory(Server.MapPath(path));
-
-                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
-                image.SaveAs(phyicsPath);
-
-                @event.AvatarUrl = Url.Content(Path.Combine(path, fileName));
-
-                await db.SaveChangesAsync();
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Edit", new { id = @event.Id });
             }
 
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
             if (User.IsInRole("Seller"))
             {
-                var userId = User.Identity.GetUserId();
-                ViewBag.ShopId = new SelectList(db.Shops.Where(s => s.ApplicationUserId == userId), "Id", "Name", @event.ShopId);
+                ViewBag.ShopId = new SelectList(db.Shops.Where(s => s.ApplicationUserId == User.Identity.GetUserId()), "Id", "Name", @event.ShopId);
             }
             return View(@event);
         }
 
-        // GET: SellerEvents/Edit/5
+        // GET: Events/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -111,10 +97,22 @@ namespace Fisheries.Seller.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,EventFrom,EvenUntil,RegeristFrom,RegeristUntil,Price,Discount,DiscountPrice,StartTime,OxygenTime,BuyPrice,FishType,FishQuantity,Positions,PositionsRemain,Description,Intro,ShopId")] Event @event)
+        public async Task<ActionResult> Edit(Event @event)
         {
             if (ModelState.IsValid)
             {
+                @event.PositionsRemain = @event.Positions;
+                var date = @event.EventFrom;
+                if (date != null)
+                {
+                    date = date.Value.Date;
+                    date = date - new TimeSpan(1, 0, 0, 0, 0);
+                }
+                @event.RegeristUntil = date;
+                if (@event.DiscountPrice == 0)
+                {
+                    @event.DiscountPrice = @event.Price;
+                }
                 db.Entry(@event).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -200,6 +198,142 @@ namespace Fisheries.Seller.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        private const int AvatarStoredWidth = 140;  // ToDo - Change the size of the stored avatar image
+        private const int AvatarStoredHeight = 140; // ToDo - Change the size of the stored avatar image
+        private const int AvatarScreenWidth = 400;  // ToDo - Change the value of the width of the image on the screen
+
+        private const string TempFolder = "/Temp";
+        private const string MapTempFolder = "~" + TempFolder;
+ 
+        private readonly string[] _imageFileExtensions = { ".jpg", ".png", ".gif", ".jpeg" };
+
+        [HttpGet]
+        public ActionResult Upload()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult _Upload()
+        {
+            return PartialView();
+        }
+
+        [ValidateAntiForgeryToken]
+        public ActionResult _Upload(IEnumerable<HttpPostedFileBase> files)
+        {
+            if (files == null || !files.Any()) return Json(new { success = false, errorMessage = "No file uploaded." });
+            var file = files.FirstOrDefault();  // get ONE only
+            if (file == null || !IsImage(file)) return Json(new { success = false, errorMessage = "File is of wrong format." });
+            if (file.ContentLength <= 0) return Json(new { success = false, errorMessage = "File cannot be zero length." });
+            var webPath = GetTempSavedFilePath(file);
+            return Json(new { success = true, fileName = webPath.Replace("/", "\\") }); // success
+        }
+
+        [HttpPost]
+        public ActionResult Save(string t, string l, string h, string w, string fileName, int infoId)
+        {
+            try
+            {
+                // Calculate dimensions
+                var top = Convert.ToInt32(t.Replace("-", "").Replace("px", ""));
+                var left = Convert.ToInt32(l.Replace("-", "").Replace("px", ""));
+                var height = Convert.ToInt32(h.Replace("-", "").Replace("px", ""));
+                var width = Convert.ToInt32(w.Replace("-", "").Replace("px", ""));
+
+                // Get file from temporary folder
+                var fn = Path.Combine(Server.MapPath(MapTempFolder), Path.GetFileName(fileName));
+                // ...get image and resize it, ...
+                var img = new WebImage(fn);
+                img.Resize(width, height);
+                // ... crop the part the user selected, ...
+                img.Crop(top, left, img.Height - top - AvatarStoredHeight, img.Width - left - AvatarStoredWidth);
+                // ... delete the temporary file,...
+                System.IO.File.Delete(fn);
+                // ... and save the new one.
+                var path = Path.Combine("/Event/", infoId.ToString());
+                var newFileName = Path.Combine(path, "avatar.jpg");
+                //var newFileName = Path.Combine(AvatarPath, Path.GetFileName(fn));
+                var newFileLocation = HttpContext.Server.MapPath("~" + newFileName);
+                if (Directory.Exists(Path.GetDirectoryName(newFileLocation)) == false)
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(newFileLocation));
+                }
+
+                img.Save(newFileLocation);
+                return Json(new { success = true, avatarFileLocation = newFileName });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, errorMessage = "Unable to upload file.\nERRORINFO: " + ex.Message });
+            }
+        }
+
+        private bool IsImage(HttpPostedFileBase file)
+        {
+            if (file == null) return false;
+            return file.ContentType.Contains("image") ||
+                _imageFileExtensions.Any(item => file.FileName.EndsWith(item, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private string GetTempSavedFilePath(HttpPostedFileBase file)
+        {
+            // Define destination
+            var serverPath = HttpContext.Server.MapPath(TempFolder);
+            if (Directory.Exists(serverPath) == false)
+            {
+                Directory.CreateDirectory(serverPath);
+            }
+
+            // Generate unique file name
+            var fileName = Path.GetFileName(file.FileName);
+            fileName = SaveTemporaryAvatarFileImage(file, serverPath, fileName);
+
+            // Clean up old files after every save
+            CleanUpTempFolder(1);
+            return Path.Combine(TempFolder, fileName);
+        }
+
+        private static string SaveTemporaryAvatarFileImage(HttpPostedFileBase file, string serverPath, string fileName)
+        {
+            var img = new WebImage(file.InputStream);
+            var ratio = img.Height / (double)img.Width;
+            img.Resize(AvatarScreenWidth, (int)(AvatarScreenWidth * ratio));
+
+            var fullFileName = Path.Combine(serverPath, fileName);
+            if (System.IO.File.Exists(fullFileName))
+            {
+                System.IO.File.Delete(fullFileName);
+            }
+
+            img.Save(fullFileName);
+            return Path.GetFileName(img.FileName);
+        }
+
+        private void CleanUpTempFolder(int hoursOld)
+        {
+            try
+            {
+                var currentUtcNow = DateTime.UtcNow;
+                var serverPath = HttpContext.Server.MapPath("/Temp");
+                if (!Directory.Exists(serverPath)) return;
+                var fileEntries = Directory.GetFiles(serverPath);
+                foreach (var fileEntry in fileEntries)
+                {
+                    var fileCreationTime = System.IO.File.GetCreationTimeUtc(fileEntry);
+                    var res = currentUtcNow - fileCreationTime;
+                    if (res.TotalHours > hoursOld)
+                    {
+                        System.IO.File.Delete(fileEntry);
+                    }
+                }
+            }
+            catch
+            {
+                // Deliberately empty.
+            }
         }
     }
 }

@@ -18,16 +18,16 @@ namespace Fisheries.Models
 
         [DataType(DataType.DateTime)]
         [Display(Name = "活动开始时间")]
-        public DateTime EventFrom { get; set; }
+        public DateTime? EventFrom { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "活动结束时间")]
-        public DateTime EvenUntil { get; set; }
+        public DateTime? EvenUntil { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "报名开始")]
-        public DateTime RegeristFrom { get; set; }
+        public DateTime? RegeristFrom { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "报名结束")]
-        public DateTime RegeristUntil { get; set; }
+        public DateTime? RegeristUntil { get; set; }
 
         [DataType(DataType.Currency)]
         [Display(Name = "价格")]
@@ -40,7 +40,6 @@ namespace Fisheries.Models
         [Display(Name = "折扣价")]
         public decimal DiscountPrice { get; set; }
 
-        public DateTime? StartTime { get; set; }
 
         [DataType(DataType.DateTime)]
         [Display(Name = "打氧时间")]
@@ -84,16 +83,17 @@ namespace Fisheries.Models
 
         [DataType(DataType.DateTime)]
         [Display(Name = "活动开始时间")]
-        public DateTime EventFrom { get; set; }
+        [Required]
+        public DateTime? EventFrom { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "活动结束时间")]
-        public DateTime EvenUntil { get; set; }
+        public DateTime? EvenUntil { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "报名开始")]
-        public DateTime RegeristFrom { get; set; }
+        public DateTime? RegeristFrom { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "报名结束")]
-        public DateTime RegeristUntil { get; set; }
+        public DateTime? RegeristUntil { get; set; }
 
         [DataType(DataType.Currency)]
         [Display(Name = "价格")]
@@ -105,8 +105,6 @@ namespace Fisheries.Models
         [DataType(DataType.Currency)]
         [Display(Name = "折扣价")]
         public decimal DiscountPrice { get; set; }
-
-        public DateTime? StartTime { get; set; }
 
         [DataType(DataType.DateTime)]
         [Display(Name = "打氧时间")]
@@ -148,7 +146,6 @@ namespace Fisheries.Models
             Price = e.Price;
             Discount = e.Discount;
             DiscountPrice = e.DiscountPrice;
-            StartTime = e.StartTime;
             OxygenTime = e.OxygenTime;
             BuyPrice = e.BuyPrice;
             FishType = e.FishType;

@@ -49,6 +49,32 @@ namespace Fisheries
             bundles.Add(new StyleBundle("~/Content/css").Include(
                  "~/Content/bootstrap.css",
                  "~/Content/Site.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/avatar").Include(
+                     "~/Scripts/site.avatar.js"));
+            bundles.Add(new ScriptBundle("~/bundles/events").Include(
+                    "~/Scripts/site.events.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jcrop").Include(
+                      "~/Scripts/jquery.Jcrop.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryform").Include(
+                      "~/Scripts/jquery.form.js"));
+
+            bundles.Add(new StyleBundle("~/Content/jcrop").Include(
+                      "~/Content/jquery.Jcrop.css"));
+
+            bundles.Add(new StyleBundle("~/Content/event").Include(
+                      "~/Content/site.avatar.event.css"));
+
+            bundles.Add(new StyleBundle("~/Content/ad").Include(
+                     "~/Content/site.avatar.ad.css"));
+
+            bundles.Add(new StyleBundle("~/Content/info").Include(
+                     "~/Content/site.avatar.information.css"));
+
+            bundles.Add(new StyleBundle("~/Content/cele").Include(
+                     "~/Content/site.avatar.event.css"));
         }
     }
 }

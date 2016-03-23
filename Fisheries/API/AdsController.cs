@@ -25,19 +25,35 @@ namespace Fisheries.API
         }
 
         [HttpGet]
-        [Route("Events")]
-        public IQueryable<Event> Events()
+        [Route("Home")]
+        public IQueryable<Ad> Home()
         {
-            var events = db.Ads.Where(a=>a.Event!=null).Select(a => a.Event).Include(e => e.Shop);
-            return events;
+            var ads = db.Ads.Where(a => a.AdCat == 1).Include(a => a.Event).Include(a => a.Event.Shop).Include(a => a.Information);
+            return ads;
         }
 
         [HttpGet]
-        [Route("Information")]
-        public IQueryable<Information> Information()
+        [Route("FameHall")]
+        public IQueryable<Ad> FameHall()
         {
-            var information = db.Ads.Where(a => a.Information != null).Select(a => a.Information).Include(i => i.Celebrity);
-            return information;
+            var ads = db.Ads.Where(a => a.AdCat == 2).Include(a => a.Event).Include(a => a.Event.Shop).Include(a => a.Information);
+            return ads;
+        }
+
+        [HttpGet]
+        [Route("Events")]
+        public IQueryable<Ad> Events()
+        {
+            var ads = db.Ads.Where(a => a.AdCat == 3).Include(a => a.Event).Include(a => a.Event.Shop).Include(a => a.Information);
+            return ads;
+        }
+
+        [HttpGet]
+        [Route("Live")]
+        public IQueryable<Ad> Live()
+        {
+            var ads = db.Ads.Where(a => a.AdCat == 4).Include(a => a.Event).Include(a => a.Event.Shop).Include(a => a.Information);
+            return ads;
         }
 
         // GET: api/AdsApi/5

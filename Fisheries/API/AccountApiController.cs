@@ -22,6 +22,9 @@ using System.IO;
 using System.Configuration;
 
 using Fisheries.Helper;
+using System.Linq;
+using System.Diagnostics;
+using Newtonsoft.Json;
 
 namespace Fisheries.API
 {
@@ -110,6 +113,122 @@ namespace Fisheries.API
         {
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return Ok();
+        }
+
+        [Route("UserDetail")]
+        [HttpGet]
+        public IHttpActionResult UserDetail()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+            var userId = User.Identity.GetUserId();
+            var user = db.Users.Find(userId);
+            return Ok(user);
+        }
+
+        [Route("ChangeAvatar")]
+        [HttpPost]
+        public async Task<IHttpActionResult> ChangeAvatar()
+        {
+            // Check if the request contains multipart/form-data.
+            if (!Request.Content.IsMimeMultipartContent())
+            {
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+            }
+
+            string root = HttpContext.Current.Server.MapPath("~/Temps/");
+            if (!Directory.Exists(root))
+            {
+                Directory.CreateDirectory(root);
+            }
+            var provider = new MultipartFormDataStreamProvider(root);
+
+            try
+            {
+                // Read the form data.
+                var task = await Request.Content.ReadAsMultipartAsync(provider);
+                var file = provider.FileData.First();
+                if (file == null)
+                    return BadRequest();
+
+                if (!IsImage(file))
+                    return BadRequest();
+                var orgfilename = GetDeserializedFileName(file);
+                var ext = Path.GetExtension(orgfilename);
+                var userId = User.Identity.GetUserId();
+                var user = UserManager.FindById(userId);
+                var phone = user.PhoneNumber;
+                var fileName = phone + ext;
+                var path = "~/Avatars/Users/";
+                var serverPath = HttpContext.Current.Server.MapPath(path);
+                if (!Directory.Exists(serverPath))
+                {
+                    Directory.CreateDirectory(serverPath);
+                }
+                var savePath = Path.Combine(path, fileName);
+                if (File.Exists(HttpContext.Current.Server.MapPath(savePath)))
+                    File.Delete(HttpContext.Current.Server.MapPath(savePath));
+                File.Move(file.LocalFileName, HttpContext.Current.Server.MapPath(savePath));
+
+                var db = new ApplicationDbContext();
+                var dbuser = db.Users.Find(userId);
+                dbuser.Avatar = savePath;
+                db.SaveChanges();
+                //Stream fileStream = File.Create(HttpContext.Current.Server.MapPath(savePath));
+                //file.
+                //task.GetStream().CopyTo(fileStream);
+
+                //file.SaveAs(HttpContext.Current.Server.MapPath(savePath));
+                return Ok();
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest();
+            }
+
+           
+        }
+
+        [Route("ChangeUsername")]
+        [HttpPost]
+        public IHttpActionResult ChangeUsername(string uesrname)
+        {
+            if (string.IsNullOrEmpty(uesrname))
+                return BadRequest();
+            ApplicationDbContext db = new ApplicationDbContext();
+            var userId = User.Identity.GetUserId();
+            if (db.Users.Any(u=>u.Id != userId && u.UserName == uesrname))
+            {
+                return BadRequest("用户名已存在");
+            }
+            var user = db.Users.Find(userId);
+            user.UserName = uesrname;
+            db.SaveChanges();
+            return Ok();
+
+
+        }
+
+
+        private readonly string[] _imageFileExtensions = { ".jpg", ".png", ".gif", ".jpeg" };
+        private bool IsImage(MultipartFileData file)
+        {
+            if (file == null) return false;
+            var f1 = false;
+            //var f1 = file.ContentType.Contains("image");
+            var filename = GetDeserializedFileName(file);
+            var f2 = _imageFileExtensions.Any(item => filename.EndsWith(item, StringComparison.OrdinalIgnoreCase));
+            return f1 || f2;
+        }
+
+        private string GetDeserializedFileName(MultipartFileData fileData)
+        {
+            var fileName = GetFileName(fileData);
+            return JsonConvert.DeserializeObject(fileName).ToString();
+        }
+
+        public string GetFileName(MultipartFileData fileData)
+        {
+            return fileData.Headers.ContentDisposition.FileName;
         }
 
         // GET api/Account/ManageInfo?returnUrl=%2F&generateState=true

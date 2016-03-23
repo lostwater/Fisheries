@@ -11,6 +11,22 @@ using Fisheries.Models;
 
 namespace Fisheries.Controllers
 {
+    public class AdCat
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+
+        static public IEnumerable<AdCat> AppAdCats()
+        {
+            var cat = new List<AdCat>();
+            cat.Add(new AdCat() { id = 1, name = "首页" });
+            cat.Add(new AdCat() { id = 2, name = "名人堂" });
+            cat.Add(new AdCat() { id = 3, name = "赛事" });
+            cat.Add(new AdCat() { id = 4, name = "直播" });
+            return cat;
+        }
+    }
+
     public class AdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -22,7 +38,40 @@ namespace Fisheries.Controllers
             return View(await ads.ToListAsync());
         }
 
-        
+        [HttpGet]
+        public async Task<ActionResult> All()
+        {
+            var ads = db.Ads.Include(a => a.Event);
+            return View(await ads.ToListAsync());
+        }
+        [HttpGet]
+        public async Task<ActionResult> Home()
+        {
+            var ads = db.Ads.Where(a=>a.AdCat==1).Include(a => a.Event);
+            return View(await ads.ToListAsync());
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> FameHall()
+        {
+            var ads = db.Ads.Where(a => a.AdCat == 2).Include(a => a.Event);
+            return View(await ads.ToListAsync());
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> Events()
+        {
+            var ads = db.Ads.Where(a => a.AdCat == 3).Include(a => a.Event);
+            return View(await ads.ToListAsync());
+        }
+        [HttpGet]
+        public async Task<ActionResult> Live()
+        {
+            var ads = db.Ads.Where(a => a.AdCat == 4).Include(a => a.Event);
+            return View(await ads.ToListAsync());
+        }
+       
+
 
         // GET: Ads/Details/5
         public async Task<ActionResult> Details(int? id)
@@ -44,6 +93,7 @@ namespace Fisheries.Controllers
         {
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name");
             ViewBag.InformationId = new SelectList(db.Information, "Id", "Title");
+            ViewBag.AdCat = new SelectList(AdCat.AppAdCats(), "id", "name");
             return View();
         }
 
@@ -56,13 +106,15 @@ namespace Fisheries.Controllers
         {
             if (ModelState.IsValid)
             {
+  
+                
                 db.Ads.Add(ad);
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
 
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
-            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title",ad.InformationId);
+            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
             return View(ad);
         }
 

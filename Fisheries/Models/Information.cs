@@ -15,7 +15,7 @@ namespace Fisheries.Models
         public string Title { get; set; }
         [Display(Name = "视频地址")]
         public string VideoUrl { get; set; }
-        [Display(Name = "视频地址")]
+        [Display(Name = "主题图")]
         public string ImageUrl { get; set; }
         [Display(Name = "简介")]
         public string Intro { get; set; }
@@ -38,6 +38,10 @@ namespace Fisheries.Models
         [Display(Name = "名人")]
         public int? CelebrityId { get; set; }
         public virtual Celebrity Celebrity { get; set; }
+
+        [Display(Name = "发布人")]
+        public string ApplicationUserId { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 
     public class InformationEditModel

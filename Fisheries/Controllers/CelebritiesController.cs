@@ -48,23 +48,12 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "Id,Name")] Celebrity celebrity, HttpPostedFileBase image)
+        public async Task<ActionResult> Create(Celebrity celebrity)
         {
             if (ModelState.IsValid)
             {
                 db.Celebrities.Add(celebrity);
                 await db.SaveChangesAsync();
-
-                var fileName = Path.GetFileName(image.FileName);
-                var path = "~/Celebrity/" + celebrity.Id.ToString() + "/";
-                if (!Directory.Exists(Server.MapPath(path)))
-                    Directory.CreateDirectory(Server.MapPath(path));
-
-                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
-                image.SaveAs(phyicsPath);
-
-                celebrity.AvatarUrl = Url.Content(Path.Combine(path, fileName));
-
                 return RedirectToAction("Index");
             }
 
@@ -91,20 +80,10 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name")] Celebrity celebrity, HttpPostedFileBase image)
+        public async Task<ActionResult> Edit(Celebrity celebrity)
         {
             if (ModelState.IsValid)
             {
-                
-                var fileName = Path.GetFileName(image.FileName);
-                var path = "~/Celebrity/" + celebrity.Id.ToString() + "/";
-                if (!Directory.Exists(Server.MapPath(path)))
-                    Directory.CreateDirectory(Server.MapPath(path));
-
-                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
-                image.SaveAs(phyicsPath);
-
-                celebrity.AvatarUrl = Url.Content(Path.Combine(path, fileName));
                 db.Entry(celebrity).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");

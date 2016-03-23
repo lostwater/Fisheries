@@ -30,13 +30,26 @@ namespace Fisheries.Providers
         public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
         {
             var userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
+            ApplicationDbContext db = new ApplicationDbContext();
+            
 
             ApplicationUser user = await userManager.FindAsync(context.UserName, context.Password);
-
             if (user == null)
             {
-                context.SetError("invalid_grant", "用户名或密码不正确。");
-                return;
+                {
+                    var tempuser = db.Users.FirstOrDefault(u => u.PhoneNumber == context.UserName);
+                    if (tempuser == null)
+                    {
+                        context.SetError("invalid_grant", "用户名或密码不正确。");
+                        return;
+                    }
+                    user = await userManager.FindAsync(tempuser.UserName, context.Password);
+                    if (user == null)
+                    {
+                        context.SetError("invalid_grant", "用户名或密码不正确。");
+                        return;
+                    }
+                }
             }
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager,

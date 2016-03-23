@@ -70,7 +70,8 @@ namespace Fisheries.Controllers
             var roleId = HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>().Roles.FirstOrDefault(r => r.Name == "Seller").Id;
             var users = db.Users.Where(u => u.Roles.Any(r => r.RoleId == roleId));
             users = users.Where(u => !db.Shops.Any(s => s.ApplicationUserId == u.Id));
-            ViewBag.ApplicationUserId = new SelectList(users, "Id", "UserName");
+            var sellers = users.ToList();
+            ViewBag.ApplicationUserId = new SelectList(sellers, "Id", "UserName");
             return View();
             //return View();
         }
@@ -105,7 +106,7 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "Avatar", shop.ApplicationUserId);
+            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "UserName", shop.ApplicationUserId);
             return View(shop);
         }
 

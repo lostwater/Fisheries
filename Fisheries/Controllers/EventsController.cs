@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Net;
 using Fisheries.Models;
 using System.IO;
+using System;
+using System.Web.Helpers;
+using System.Collections.Generic;
 
 namespace Fisheries.Controllers
 {
@@ -83,29 +86,15 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create( Event @event, HttpPostedFileBase image)
+        public async Task<ActionResult> Create( Event @event)
         {
             if (ModelState.IsValid)
             {
-                @event.PositionsRemain = @event.Positions;
-                
+                @event.RegeristFrom = DateTime.Now;
                 db.Events.Add(@event);
                 await db.SaveChangesAsync();
 
-                var fileName = Path.GetFileName(image.FileName);
-                var path = "~/Event/" + @event.Id.ToString() + "/";
-                //path =;
-                if (!Directory.Exists(Server.MapPath(path)))
-                    Directory.CreateDirectory(Server.MapPath(path));
-
-                var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
-                image.SaveAs(phyicsPath);
-
-                @event.AvatarUrl = Url.Content(Path.Combine(path, fileName));
-
-                await db.SaveChangesAsync();
-
-                return RedirectToAction("Index");
+                return RedirectToAction("Edit", new { id = @event.Id });
             }
 
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
@@ -137,10 +126,22 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,EventFrom,EvenUntil,RegeristFrom,RegeristUntil,Price,Discount,DiscountPrice,StartTime,OxygenTime,BuyPrice,FishType,Positions,PositionsRemain,Description,Intro,ShopId")] Event @event)
+        public async Task<ActionResult> Edit(Event @event)
         {
             if (ModelState.IsValid)
             {
+                @event.PositionsRemain = @event.Positions;
+                var date = @event.EventFrom;
+                if (date != null)
+                {
+                    date = date.Value.Date;
+                    date = date - new TimeSpan(1, 0, 0, 0, 0);
+                }
+                @event.RegeristUntil = date;
+                if (@event.DiscountPrice == 0)
+                {
+                    @event.DiscountPrice = @event.Price;
+                }
                 db.Entry(@event).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -183,5 +184,7 @@ namespace Fisheries.Controllers
             }
             base.Dispose(disposing);
         }
+
+        
     }
 }

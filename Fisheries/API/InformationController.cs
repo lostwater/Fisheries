@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Fisheries.Models;
+using System.Web.Http.OData;
 
 namespace Fisheries.API
 {
@@ -19,11 +20,24 @@ namespace Fisheries.API
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/InformationApi
+        [EnableQuery]
         public IQueryable<Information> GetInformation()
         {
-            return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType);
+            return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType).AsQueryable();
 
         }
+
+        [HttpGet]
+        [Route("Type/{typeId}")]
+        public IQueryable<Information> InformationsByType(int typeId)
+        {
+            if(typeId == 0 || typeId == null)
+                return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType);
+            return db.Information.Where(i=>i.InformationTypeId == typeId).OrderByDescending(i => i.Id).Include(i => i.InformationType);
+
+        }
+
+
 
         [HttpGet]
         [Route("CeleberityInfomation")]

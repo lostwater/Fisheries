@@ -9,6 +9,10 @@ using System.Web;
 using System.Web.Mvc;
 using Fisheries.Models;
 using System.IO;
+using System.Web.Helpers;
+using Microsoft.AspNet.Identity;
+using PagedList;
+
 
 namespace Fisheries.Controllers
 {
@@ -16,10 +20,25 @@ namespace Fisheries.Controllers
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Information
-        public async Task<ActionResult> Index()
+        public InformationController()
         {
-            return View(await db.Information.ToListAsync());
+
+        }
+
+        // GET: Information
+        public ViewResult Index(int? page)
+        {
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            var info = db.Information.OrderByDescending(i => i.Id);
+            if (User.IsInRole("Seller"))
+            {
+                var userId = User.Identity.GetUserId();
+                info = db.Information.Where(i => i.ApplicationUserId == userId).OrderByDescending(i => i.Id);
+            }
+            var PageInfo = info.ToPagedList(pageNumber, pageSize);
+            ViewBag.PageInfo = PageInfo;
+            return View(PageInfo);
         }
 
         public async Task<ActionResult> Celebrity(int? id)
@@ -45,7 +64,15 @@ namespace Fisheries.Controllers
         // GET: Information/Create
         public ActionResult Create()
         {
-            ViewBag.InformationTypeId = new SelectList(db.InformationTypes.Where(i=>i.Id!=2), "Id", "Name");
+            if (User.IsInRole("Seller"))
+            {
+                ViewBag.InformationTypeId = new SelectList(db.InformationTypes.Where(i => i.Id == 4), "Id", "Name");
+            }
+            else
+            {
+                ViewBag.InformationTypeId = new SelectList(db.InformationTypes.Where(i => i.Id != 2), "Id", "Name");
+            }
+            
             //ViewBag.ApplicationUserId = new SelectList(db.InformationType.Where(u => u.Roles.Any(r => r.RoleId == roleId)), "Id", "UserName");
             return View();
         }
@@ -59,6 +86,7 @@ namespace Fisheries.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.Identity.GetUserId();
                 var information = new Information()
                 {
                     Title = model.Title,
@@ -66,17 +94,12 @@ namespace Fisheries.Controllers
                     Intro = model.Intro,
                     CreatedTime = DateTime.Now,
                     InformationTypeId = model.InformationTypeId,
-                    IsPublished = false
+                    IsPublished = false,
+                    ApplicationUserId = userId
                 };
                 db.Information.Add(information);
                 await db.SaveChangesAsync();
 
-                //var fileName = Path.GetFileName(model.Image.FileName);
-                //fileName = DateTime.Now.Ticks.ToString() + fileName;
-                var path = Path.Combine("~/InformationFiles/", information.Id.ToString());
-                if (!Directory.Exists(Server.MapPath(path)))
-                    Directory.CreateDirectory(Server.MapPath(path));
-                //model.Image.SaveAs(path);     
                 return RedirectToAction("Edit",new { id = information.Id });
             }
             ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
@@ -99,6 +122,7 @@ namespace Fisheries.Controllers
         {
             if (ModelState.IsValid)
             {
+                var userId = User.Identity.GetUserId();
                 var information = new Information()
                 {
                     Title = model.Title,
@@ -108,6 +132,7 @@ namespace Fisheries.Controllers
                     InformationTypeId = model.InformationTypeId,
                     IsPublished = false,
                     CelebrityId = id,
+                    ApplicationUserId = userId
                 };
                 db.Information.Add(information);
                 await db.SaveChangesAsync();
@@ -136,7 +161,17 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
-            var model = new InformationEditModel(information);
+            var model = information;
+            if (model.Content != null)
+            {
+                var content = model.Content.Replace("</script><script type=\"text/javascript\" src=\"http://yuntv.letv.com/bcloud.js\"></script>"
+                    , "&lt;/script&gt;&lt;script type=\"text/javascript\" src=\"http://yuntv.letv.com/bcloud.js\"&gt;&lt;/script&gt;");
+                content = content.Replace( "<script", "&lt;script");
+                content = content.Replace( "type=\"text/javascript\">", "type=\"text/javascript\"&gt;");
+                content = content.Replace("&&","&amp;&amp;");
+                model.Content = content;
+            }
+            //var model = new InformationEditModel(information);
             ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name", model.InformationTypeId);
             return View(model);
         }
@@ -146,28 +181,26 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(InformationEditModel model)
+        public async Task<ActionResult> Edit(Information model)
         {
             if (ModelState.IsValid)
             {
                 //db.Entry(information).State = EntityState.Modified;
                 Information _information = await db.Information.FindAsync(model.Id);
 
-                if (model.Image != null)
+                var content = "";
+                if (model.Content != null)
                 {
-                    var fileName = Path.GetFileName(model.Image.FileName);
-                    var path = "~/InformationFiles/" + model.Id.ToString() + "/";     
-                    //path =;
-                    if (!Directory.Exists(Server.MapPath(path)))
-                        Directory.CreateDirectory(Server.MapPath(path));
-                    var phyicsPath = Path.Combine(Server.MapPath(path), fileName);
-                    model.Image.SaveAs(phyicsPath);
-                    _information.ImageUrl = Url.Content(Path.Combine(path, fileName));
+                    //content = model.Content.Replace("&lt;", "<");
+                    content = model.Content.Replace("&lt;/script&gt;&lt;script type=\"text/javascript\" src=\"http://yuntv.letv.com/bcloud.js\"&gt;&lt;/script&gt;",
+                        "</script><script type=\"text/javascript\" src=\"http://yuntv.letv.com/bcloud.js\"></script>");
+                    content = content.Replace("&lt;script", "<script");
+                    content = content.Replace("type=\"text/javascript\"&gt", "type=\"text/javascript\">");
+                    content = content.Replace("&amp;&amp;", "&&");
+                    content = content.Replace("h&gt;0", "h>0");
+                    content = content.Replace("var letvcloud_player_conf = &nbsp;", "var letvcloud_player_conf =  ");
                 }
-                //var content = 
-                
-                _information.PublishedTime = DateTime.Now;
-                _information.Content = model.Content;
+                _information.Content = content;
                 _information.Title = model.Title;          
                 _information.Intro = model.Intro;
                 
@@ -175,6 +208,7 @@ namespace Fisheries.Controllers
                 _information.IsPublished = model.IsPublished;
 
                 _information.InformationTypeId = model.InformationTypeId;
+                _information.ImageUrl = model.ImageUrl;
 
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
@@ -218,5 +252,6 @@ namespace Fisheries.Controllers
             }
             base.Dispose(disposing);
         }
+
     }
 }

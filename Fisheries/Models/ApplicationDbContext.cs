@@ -12,7 +12,7 @@ namespace Fisheries.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("qds218206332_dbEntities", throwIfV1Schema: false)
+            : base("fisheries_dbEntities", throwIfV1Schema: false)
         {
             //this.Database.Connection.ConnectionString = this.Database.Connection.ConnectionString + ";Password = jimmysill";
         }
@@ -39,6 +39,8 @@ namespace Fisheries.Models
         public System.Data.Entity.DbSet<Fisheries.Models.Ad> Ads { get; set; }
 
         public System.Data.Entity.DbSet<Fisheries.Models.Celebrity> Celebrities { get; set; }
+
+        public System.Data.Entity.DbSet<Fisheries.Models.Video> Videos { get; set; }
 
         //public System.Data.Entity.DbSet<Client> Clients { get; set; }
 

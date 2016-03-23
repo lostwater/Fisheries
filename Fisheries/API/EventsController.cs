@@ -16,7 +16,7 @@ using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using Fisheries.Models;
-
+using System.Globalization;
 
 namespace Fisheries.API
 {
@@ -26,10 +26,29 @@ namespace Fisheries.API
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/EventsApi
-        public IQueryable<Event> GetEvents()
+        public IQueryable<Event> GetEvents(string date = "")
         {
-            return db.Events.Include(e => e.Shop);
+            if(string.IsNullOrEmpty(date))
+                return db.Events.Include(e => e.Shop);
+            else
+            {
+                try
+                {
+                    var events = db.Events.Where(e => e.EventFrom.HasValue).Include(e => e.Shop).ToList();
+                    DateTime dt = DateTime.ParseExact(date, "ddMMyyyy", CultureInfo.InvariantCulture);
+                    events = events.Where(e => e.EventFrom.GetValueOrDefault().Date == dt.Date).ToList();
+                    return events.AsQueryable();
+                }
+                catch
+                {
+                    return db.Events.Include(e => e.Shop);
+                }
+            }
+            //else
+             
         }
+
+
 
         // GET: api/EventsApi/5
         [ResponseType(typeof(Event))]

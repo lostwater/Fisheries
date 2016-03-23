@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
 using Fisheries.Models;
 
 namespace Fisheries.Seller
@@ -19,7 +21,8 @@ namespace Fisheries.Seller
         // GET: SelleerShops
         public async Task<ActionResult> Index()
         {
-            var shops = db.Shops.Include(s => s.ApplicationUser);
+            var userId = User.Identity.GetUserId();
+            var shops = db.Shops.Where(s=>s.ApplicationUserId==userId).Include(s => s.ApplicationUser);
             return View(await shops.ToListAsync());
         }
 

@@ -13,6 +13,7 @@ using Fisheries.Models;
 
 namespace Fisheries.API
 {
+    [RoutePrefix("api/Celebrities")]
     public class CelebritiesController : ApiController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -22,6 +23,22 @@ namespace Fisheries.API
         {
             return db.Celebrities;
         }
+
+
+       [HttpGet]
+       [Route("{id}/Videos")]
+        public async Task<IHttpActionResult> Videos(int id)
+        {
+            Celebrity celebrity = await db.Celebrities.FindAsync(id);
+            if (celebrity == null)
+            {
+                return NotFound();
+            }
+            var videos = await db.Videos.Where(v => v.CelebrityId == id).ToListAsync();
+            return Ok(videos);
+        }
+
+
 
         // GET: api/Celebrities/5
         [ResponseType(typeof(Celebrity))]

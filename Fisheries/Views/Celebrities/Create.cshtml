@@ -4,16 +4,73 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>编辑</h2>
+@Scripts.Render("~/bundles/jqueryform")
+@Scripts.Render("~/bundles/jcrop")
+@Scripts.Render("~/bundles/events")
+@Styles.Render("~/Content/jcrop")
+@Styles.Render("~/Content/cele")
 
-@using (Html.BeginForm(Html.BeginForm("Create", "Celebrities", FormMethod.Post, new { enctype = "multipart/form-data" })))
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+
+
+<h2>创建</h2>
+@using (Ajax.BeginRouteForm("Default", new { controller = "ImageUploader", action = "_Upload" }, new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "avatar-upload-form" }))
+
 {
     @Html.AntiForgeryToken()
-    
     <div class="form-horizontal">
-        <h4>Celebrity</h4>
+        <h4>名人堂</h4>
         <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.AvatarUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="files" /><br>
+                <div class="upload-file-notice">最大大小: <span id="avatar-max-size"></span> MB</div>
+                <div id="avatar-upload-box">
+                    <div class="upload-progress col-md-6 hidden">
+                        <div class="upload-percent-value pull-left">0%</div>
+                        <div class="upload-percent-bar pull-left"></div>
+                    </div>
+                    <div id="upload-status"></div>
+                </div>
+                <div id="avatar-crop-box" class="hidden">
+                    <p>
+                        <img src="" id="crop-avatar-target" alt="Uploaded image" />
+                        <div id="preview-pane" class="hidden">
+                            <div class="preview-container">
+
+                                <img src="" class="jcrop-preview" alt="Preview" />
+                            </div>
+                        </div>
+                    </p>
+                    <p><button class="btn btn-default" onclick="saveAvatar('3');">保存</button></p>
+                </div>
+                @*<div id="avatar-result" class="">
+                        <img src="@Model.AvatarUrl" alt="Final Image" />
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+}
+
+@using (Html.BeginForm("Create", "Celebrities", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="form-group">
+            <label class = "control-label col-md-2"></label>
+            <div id="avatar-result" class="col-md-10">
+                <img src="" alt="Image" />
+                @Html.EditorFor(model => model.AvatarUrl, new { htmlAttributes = new { @class = "hidden" } })
+            </div>
+        </div>
+
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -21,17 +78,18 @@
                 @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
             </div>
         </div>
+
         <div class="form-group">
-            @Html.LabelFor(model => model.AvatarUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.Intro, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input type="file" name="image" class="form-control" />
-      
+                @Html.EditorFor(model => model.Intro, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Intro, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="确定" class="btn btn-default" />
             </div>
         </div>
     </div>

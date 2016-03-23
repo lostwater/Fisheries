@@ -2,20 +2,83 @@
 
 @{
     ViewBag.Title = "Edit";
+    var eventId = Model.Id;
 }
 
-<h2>Edit</h2>
+@Scripts.Render("~/bundles/jqueryform")
+@Scripts.Render("~/bundles/jcrop")
+@Scripts.Render("~/bundles/events")
+@Styles.Render("~/Content/jcrop")
+@Styles.Render("~/Content/event")
 
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+
+<h2>编辑</h2>
+@*@using (Ajax.BeginForm("_Upload", "ImageUploader", new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data" }))*@
+@using (Ajax.BeginRouteForm("Default", new { controller = "ImageUploader", action = "_Upload" }, new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "avatar-upload-form" }))
+
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <h4>赛事</h4>
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.AvatarUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="files" /><br>
+                <div class="upload-file-notice">最大大小: <span id="avatar-max-size"></span> MB</div>
+                <div id="avatar-upload-box">
+                    <div class="upload-progress col-md-6 hidden">
+                        <div class="upload-percent-value pull-left">0%</div>
+                        <div class="upload-percent-bar pull-left"></div>
+                    </div>
+                    <div id="upload-status"></div>
+                </div>
+                <div id="avatar-crop-box" class="hidden">
+                    <p>
+                        <img src="" id="crop-avatar-target" alt="Uploaded image" />
+                        <div id="preview-pane">
+                            <div class="preview-container">
+
+                                <img src="" class="jcrop-preview" alt="Preview" />
+                            </div>
+                        </div>
+                    </p>
+                    <p><button class="btn btn-default" onclick="saveAvatar('1');">保存</button></p>
+                </div>
+                @*<div id="avatar-result" class="">
+                        <img src="@Model.AvatarUrl" alt="Final Image" />
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+}
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>Event</h4>
-        <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
+        @*@Html.HiddenFor(model => model.AvatarUrl)*@
+        <div class="form-group">
+            @Html.LabelFor(model => model.AvatarUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div id="avatar-result" class="col-md-10">
+                <img src="@Model.AvatarUrl" alt="Final Image" />
+                @Html.EditorFor(model => model.AvatarUrl, new { htmlAttributes = new { @class = "hidden" } })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.IsPublished, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.IsPublished, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.IsPublished, "", new { @class = "text-danger" })
+            </div>
+        </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -41,21 +104,21 @@
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.RegeristFrom, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RegeristFrom, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RegeristFrom, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.RegeristFrom, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.RegeristFrom, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.RegeristFrom, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.RegeristUntil, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.RegeristUntil, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.RegeristUntil, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.RegeristUntil, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.RegeristUntil, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.RegeristUntil, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -66,28 +129,14 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.Discount, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Discount, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Discount, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.LabelFor(model => model.DiscountPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+            <label class="control-label col-md-2">若设置0元，将自动使用原价价格</label>
             <div class="col-md-10">
                 @Html.EditorFor(model => model.DiscountPrice, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DiscountPrice, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.StartTime, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.StartTime, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.StartTime, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.OxygenTime, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -114,14 +163,6 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.FishQuantity, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.FishQuantity, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.FishQuantity, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
             @Html.LabelFor(model => model.Positions, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.Positions, new { htmlAttributes = new { @class = "form-control" } })
@@ -129,13 +170,13 @@
             </div>
         </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.PositionsRemain, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.PositionsRemain, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.PositionsRemain, "", new { @class = "text-danger" })
-            </div>
-        </div>
+        @*<div class="form-group">
+                @Html.LabelFor(model => model.PositionsRemain, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.PositionsRemain, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.PositionsRemain, "", new { @class = "text-danger" })
+                </div>
+            </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -153,13 +194,15 @@
             </div>
         </div>
 
-        <div class="form-group">
+        @Html.HiddenFor(model=>model.ShopId)
+        @*<div class="form-group">
             @Html.LabelFor(model => model.ShopId, "ShopId", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
+
                 @Html.DropDownList("ShopId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ShopId, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
