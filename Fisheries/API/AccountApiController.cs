@@ -190,18 +190,18 @@ namespace Fisheries.API
 
         [Route("ChangeUsername")]
         [HttpPost]
-        public IHttpActionResult ChangeUsername(string uesrname)
+        public IHttpActionResult ChangeUsername(string username)
         {
-            if (string.IsNullOrEmpty(uesrname))
+            if (string.IsNullOrEmpty(username))
                 return BadRequest();
             ApplicationDbContext db = new ApplicationDbContext();
             var userId = User.Identity.GetUserId();
-            if (db.Users.Any(u=>u.Id != userId && u.UserName == uesrname))
+            if (db.Users.Any(u=>u.Id != userId && u.UserName == username))
             {
                 return BadRequest("用户名已存在");
             }
             var user = db.Users.Find(userId);
-            user.UserName = uesrname;
+            user.UserName = username;
             db.SaveChanges();
             return Ok();
 
