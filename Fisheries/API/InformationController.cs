@@ -23,7 +23,7 @@ namespace Fisheries.API
         [EnableQuery]
         public IQueryable<Information> GetInformation()
         {
-            return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType).AsQueryable();
+            return db.Information.Where(i=>i.IsPublished).OrderByDescending(i => i.Id).Include(i => i.InformationType).AsQueryable();
 
         }
 
@@ -32,8 +32,8 @@ namespace Fisheries.API
         public IQueryable<Information> InformationsByType(int typeId)
         {
             if(typeId == 0 || typeId == null)
-                return db.Information.OrderByDescending(i => i.Id).Include(i => i.InformationType);
-            return db.Information.Where(i=>i.InformationTypeId == typeId).OrderByDescending(i => i.Id).Include(i => i.InformationType);
+                return db.Information.Where(i => i.IsPublished).OrderByDescending(i => i.Id).Include(i => i.InformationType);
+            return db.Information.Where(i => i.IsPublished).Where(i=>i.InformationTypeId == typeId).OrderByDescending(i => i.Id).Include(i => i.InformationType);
 
         }
 

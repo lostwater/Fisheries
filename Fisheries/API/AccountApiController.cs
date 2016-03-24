@@ -25,6 +25,8 @@ using Fisheries.Helper;
 using System.Linq;
 using System.Diagnostics;
 using Newtonsoft.Json;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace Fisheries.API
 {
@@ -484,9 +486,9 @@ namespace Fisheries.API
             {
                 return BadRequest(ModelState);
             }
-            if(model.PhoneNumber != validPhone || model.VerifyCode != validCode)
+            if (!VerifySMS(model.PhoneNumber, model.VerifyCode))
             {
-                //return BadRequest("验证码无效");
+                return BadRequest("验证码无效");
             }
 
             var user = new ApplicationUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber };
@@ -523,6 +525,36 @@ namespace Fisheries.API
                 return BadRequest();
         }
 
+        [AllowAnonymous]
+        [Route("VerifySMS")]
+        public  bool VerifySMS(string phone, string code)
+        {
+
+            WebRequest request = WebRequest.Create("https://webapi.sms.mob.com/sms/verify");
+            request.Proxy = null;
+            request.Credentials = CredentialCache.DefaultCredentials;
+
+            //allows for validation of SSL certificates 
+
+            ServicePointManager.ServerCertificateValidationCallback += new System.Net.Security.RemoteCertificateValidationCallback(ValidateServerCertificate);
+            byte[] bs = Encoding.UTF8.GetBytes("appkey=10141f2a0a77c&amp;phone="+phone+"&amp;zone=86&amp;code=" + code);
+            request.Method = "Post";
+            using (Stream reqStream = request.GetRequestStream())
+            {
+                reqStream.Write(bs, 0, bs.Length);
+            }
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            Stream dataStream = response.GetResponseStream();
+            StreamReader reader = new StreamReader(dataStream);
+            string responseFromServer = reader.ReadToEnd();
+            return responseFromServer.Contains("200");
+        }
+
+        //for testing purpose only, accept any dodgy certificate... 
+        public  bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
 
         // POST api/Account/RegisterExternal
         [OverrideAuthentication]

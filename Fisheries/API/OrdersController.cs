@@ -22,14 +22,30 @@ namespace Fisheries.API
 
         // GET: api/BuyerOrders
         [ResponseType(typeof(IQueryable<Order>))]
-        public async Task<IHttpActionResult> GetOrders()
+        public async Task<IHttpActionResult> GetOrders(int timePara = 0, int statuPara = 0)
         {
             if (!User.Identity.IsAuthenticated)
                 return BadRequest();
             else
             {
                 var userId = User.Identity.GetUserId();
-                return Ok(await db.Orders.Where(o => o.ApplicationUserId == userId).Include(o => o.Event).Include(o => o.Event.Shop).Include(o =>o.Payment).ToListAsync());
+                var orders = db.Orders.Where(o => o.ApplicationUserId == userId);
+                if (timePara!=0)
+                {
+                    var afterTime = new DateTime();
+                    if (timePara == 1)
+                        afterTime = DateTime.Now - new TimeSpan(30, 0, 0, 0);
+                    if (timePara == 2)
+                        afterTime = DateTime.Now - new TimeSpan(7, 0, 0, 0);
+                   orders = orders.Where(o => o.OrderTime > afterTime);
+                }
+                if (statuPara != 0)
+                {
+                    orders = orders.Where(o => o.OrderStatuId == statuPara);
+                }
+
+               
+                return Ok(await orders.Include(o => o.Event).Include(o => o.Event.Shop).Include(o =>o.Payment).OrderByDescending(o => o.Id).ToListAsync());
             }
         }
 

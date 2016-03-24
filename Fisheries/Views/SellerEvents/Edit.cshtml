@@ -38,7 +38,7 @@
                 <div id="avatar-crop-box" class="hidden">
                     <p>
                         <img src="" id="crop-avatar-target" alt="Uploaded image" />
-                        <div id="preview-pane">
+                        <div id="preview-pane"  class="hidden">
                             <div class="preview-container">
 
                                 <img src="" class="jcrop-preview" alt="Preview" />
@@ -130,6 +130,10 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.DiscountPrice, htmlAttributes: new { @class = "control-label col-md-2" })
+           
+        </div>
+
+        <div class="form-group">
             <label class="control-label col-md-2">若设置0元，将自动使用原价价格</label>
             <div class="col-md-10">
                 @Html.EditorFor(model => model.DiscountPrice, new { htmlAttributes = new { @class = "form-control" } })
