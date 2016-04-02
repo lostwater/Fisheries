@@ -70,6 +70,9 @@ namespace Fisheries
             bundles.Add(new StyleBundle("~/Content/ad").Include(
                      "~/Content/site.avatar.ad.css"));
 
+            bundles.Add(new StyleBundle("~/Content/homeAd").Include(
+                     "~/Content/site.avatar.home.ad.css"));
+
             bundles.Add(new StyleBundle("~/Content/info").Include(
                      "~/Content/site.avatar.information.css"));
 

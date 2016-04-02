@@ -118,6 +118,35 @@ namespace Fisheries.Controllers
             return View(ad);
         }
 
+        public ActionResult HomeCreate()
+        {
+            ViewBag.EventId = new SelectList(db.Events, "Id", "Name");
+            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title");
+            ViewBag.AdCat = new SelectList(AdCat.AppAdCats(), "id", "name");
+            return View();
+        }
+
+        // POST: Ads/Create
+        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
+        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> HomeCreate(Ad ad)
+        {
+            if (ModelState.IsValid)
+            {
+
+
+                db.Ads.Add(ad);
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
+            ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
+            return View(ad);
+        }
+
         // GET: Ads/Edit/5
         public async Task<ActionResult> Edit(int? id)
         {

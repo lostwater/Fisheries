@@ -116,7 +116,7 @@ namespace Fisheries.Models
 
         [Display(Name = "鱼种")]
         public string FishType { get; set; }
-        [Display(Name = "放钓量")]
+        [Display(Name = "放钓量(斤)")]
         public float FishQuantity { get; set; }
         [Display(Name = "总钓位")]
         public int Positions { get; set; }

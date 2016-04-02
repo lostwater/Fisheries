@@ -71,14 +71,14 @@
                 @Html.EditorFor(model => model.AvatarUrl, new { htmlAttributes = new { @class = "hidden" } })
             </div>
         </div>
-
-        <div class="form-group">
+        @Html.HiddenFor(model => model.IsPublished)
+        @*<div class="form-group">
             @Html.LabelFor(model => model.IsPublished, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.IsPublished, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.IsPublished, "", new { @class = "text-danger" })
             </div>
-        </div>
+        </div>*@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -122,7 +122,7 @@
 
         <div class="form-group">
             @Html.LabelFor(model => model.Price, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
+            <div class="col-md-10" style="width: 150px">
                 @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
             </div>
@@ -135,7 +135,7 @@
 
         <div class="form-group">
             <label class="control-label col-md-2">若设置0元，将自动使用原价价格</label>
-            <div class="col-md-10">
+            <div class="col-md-10" style="width: 150px">
                 @Html.EditorFor(model => model.DiscountPrice, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DiscountPrice, "", new { @class = "text-danger" })
             </div>
@@ -150,12 +150,12 @@
             </div>
         </div>
 
-        <div class="form-group">
+         <div class="col-md-10" style = "width: 150px">
             @Html.LabelFor(model => model.BuyPrice, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.BuyPrice, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.BuyPrice, "", new { @class = "text-danger" })
-            </div>
+             <div class="col-md-10" style="width: 150px">
+                 @Html.EditorFor(model => model.BuyPrice, new { htmlAttributes = new { @class = "form-control" } })
+                 @Html.ValidationMessageFor(model => model.BuyPrice, "", new { @class = "text-danger" })
+             </div>
         </div>
 
         <div class="form-group">
@@ -163,6 +163,14 @@
             <div class="col-md-10">
                 @Html.EditorFor(model => model.FishType, new { htmlAttributes = new { @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.FishType, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.FishQuantity, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.FishQuantity, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.FishQuantity, "", new { @class = "text-danger" })
             </div>
         </div>
 

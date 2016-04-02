@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "EditPositions";
     int positionRemain = Model.PositionsRemain;
+    int positionToken = Model.Positions - Model.PositionsRemain;
 }
 
 
@@ -65,14 +66,7 @@
             @Html.DisplayFor(model => model.Price)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Discount)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Discount)
-        </dd>
-
+    
         <dt>
             @Html.DisplayNameFor(model => model.DiscountPrice)
         </dt>
@@ -118,7 +112,7 @@
         </dt>
 
         <dd>
-            @(Html.Kendo().NumericTextBoxFor<int>(model => model.Positions).Min(positionRemain).Max(10000).Value(positionRemain).Format("#").HtmlAttributes(new { style = "width: 100" }))
+            @(Html.Kendo().NumericTextBoxFor<int>(model => model.Positions).Min(positionToken).Max(10000).Value(positionRemain).Format("#").HtmlAttributes(new { style = "width: 100" }))
         </dd>
 
         <dt>
@@ -127,6 +121,13 @@
 
         <dd>
             @Html.DisplayFor(model => model.PositionsRemain)
+        </dd>
+        <dt>
+           
+        </dt>
+
+        <dd>
+            <label>将根据总钓位和已预订钓位自动更新</label>
         </dd>
 
         <dt>

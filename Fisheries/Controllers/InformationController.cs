@@ -129,7 +129,6 @@ namespace Fisheries.Controllers
                     VideoUrl = model.VideoUrl,
                     Intro = model.Intro,
                     CreatedTime = DateTime.Now,
-                    InformationTypeId = model.InformationTypeId,
                     IsPublished = false,
                     CelebrityId = id,
                     ApplicationUserId = userId

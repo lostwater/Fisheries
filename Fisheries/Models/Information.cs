@@ -32,8 +32,8 @@ namespace Fisheries.Models
         public bool IsPublished { get; set; }
 
         [Display(Name = "信息类型")]
-        public int InformationTypeId { get; set; }
-        public InformationType InformationType { get; set; }
+        public int? InformationTypeId { get; set; }
+        public virtual InformationType InformationType { get; set; }
 
         [Display(Name = "名人")]
         public int? CelebrityId { get; set; }
@@ -69,8 +69,8 @@ namespace Fisheries.Models
         [Display(Name = "是否发布")]
         public bool IsPublished { get; set; }
         [Display(Name = "信息类型")]
-        public int InformationTypeId { get; set; }
-        public InformationType InformationType { get; set; }
+        public int? InformationTypeId { get; set; }
+        public virtual InformationType InformationType { get; set; }
         
         [Display(Name = "主图片")]
         public HttpPostedFileBase Image { get; set; }

@@ -9,8 +9,16 @@ namespace Fisheries.Models
     {
         public int Id { get; set; }
         public DateTime? PaymentTime { get; set; }
-        public float PaymentPrice { get; set; }
+        public DateTime CreateTime { get; set; }
+        public Decimal Amount { get; set; }
+        public Decimal RefundAmount { get; set; }
         public string Description { get; set; }
+        public string Channel { get; set; }
+        public bool isPaid { get; set; }
+        public bool isRefund { get; set; }
+        public string PingChargeId { get; set; }
+        public string ChannelPaymentId { get; set; }
+        public string ChannelPaymentUserId { get; set; }
 
     }
 }

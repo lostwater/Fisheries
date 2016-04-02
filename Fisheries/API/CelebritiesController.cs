@@ -26,6 +26,7 @@ namespace Fisheries.API
 
 
        [HttpGet]
+       [ResponseType(typeof(List<Video>))]
        [Route("{id}/Videos")]
         public async Task<IHttpActionResult> Videos(int id)
         {

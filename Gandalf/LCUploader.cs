@@ -719,6 +719,36 @@ namespace Gandalf
             return resUrl;
         }
 
+        public string handleLiveParam(string apiUrl, Dictionary<string, object> args)
+        {
+            TimeSpan ts = DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0);  //timestamp
+            string timestamp = Convert.ToInt64(ts.TotalMilliseconds).ToString();
+            args.Add("timestamp", timestamp);
+  
+
+            List<string> keyList = new List<string>(args.Keys);
+            keyList.Sort();
+
+            string urlParam = "";
+            string keyStr = "";
+            for (int i = 0; i < keyList.Count; i++)
+            {
+                string key = keyList[i];
+                urlParam += (String.IsNullOrEmpty(urlParam) ? "?" : "&") + key + "=" + HttpUtility.UrlEncode(args[key].ToString());
+                keyStr += key + args[key];
+            }
+            keyStr += secretKey;
+
+            MD5 md5 = new MD5CryptoServiceProvider();
+            byte[] output = md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(keyStr));
+            string signStr = BitConverter.ToString(output).Replace("-", String.Empty).ToLower();
+
+            urlParam += "&sign=" + signStr;
+            String resUrl = apiUrl + urlParam;
+
+            return resUrl;
+        }
+
         public string doRequest(String url)
         {
             Uri uri = new Uri(url);

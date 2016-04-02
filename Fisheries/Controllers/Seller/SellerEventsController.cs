@@ -113,6 +113,7 @@ namespace Fisheries.Seller.Controllers
                 {
                     @event.DiscountPrice = @event.Price;
                 }
+                @event.IsPublished = true;
                 db.Entry(@event).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");

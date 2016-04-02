@@ -27,6 +27,7 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using System.Web.Http.Description;
 
 namespace Fisheries.API
 {
@@ -119,6 +120,7 @@ namespace Fisheries.API
 
         [Route("UserDetail")]
         [HttpGet]
+        [ResponseType(typeof(ApplicationUser))]
         public IHttpActionResult UserDetail()
         {
             ApplicationDbContext db = new ApplicationDbContext();

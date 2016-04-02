@@ -30,6 +30,10 @@ namespace Fisheries.Models
         private const int AdHeight = 160; // ToDo - Change the size of the stored avatar image
         private const int AdScreenWidth = 1024;  // ToDo - Change the value of the width of the image on the screen
 
+        private const int HomeAdWidth = 960;  // ToDo - Change the size of the stored avatar image
+        private const int HomeAdHeight = 465; // ToDo - Change the size of the stored avatar image
+        private const int HomeAdScreenWidth = 1024;  // ToDo - Change the value of the width of the image on the screen
+
         private const string TempFolder = "/Temp";
         private const string MapTempFolder = "~" + TempFolder;
         private const string EventAvatarPath = "/Avatars/Events";
@@ -115,6 +119,9 @@ namespace Fisheries.Models
                     return Save(t, l, h, w, fileName, CelebrityAvatarPath);
                 case 4:
                     setSize(AdWidth, AdHeight, AdScreenWidth);
+                    return Save(t, l, h, w, fileName, AdsAvatarPath);
+                case 5:
+                    setSize(HomeAdWidth, HomeAdHeight, HomeAdScreenWidth);
                     return Save(t, l, h, w, fileName, AdsAvatarPath);
             }
             return Json(new { success = false, errorMessage = "Unable to upload file.\nERRORINFO: " });

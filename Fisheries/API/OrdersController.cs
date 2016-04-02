@@ -137,7 +137,7 @@ namespace Fisheries.API
             var order = new Order()
             {
                 EventId = eventId,
-                OrderPrice = _event.Price,
+                OrderPrice = _event.DiscountPrice,
                 OrderTime = DateTime.Now,
                 OrderStatuId = 1,
                 Quantity = 1,

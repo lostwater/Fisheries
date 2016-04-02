@@ -67,8 +67,10 @@ namespace Fisheries.Helper
              return false;
 
         }
-        static public async Task<bool> SendOrderCode(string phoneNumber, string code, Fisheries.Models.Order order)
+        static public async Task<bool> SendOrderCode(Models.Order order)
         {
+            var code = order.Code;
+            var phoneNumber = order.PhoneNumber;
             string account = "cf_xyxd";
             string password = "xiyuanxiongdi";//密码可以使用明文密码或使用32位MD5加密
 
