@@ -29,12 +29,13 @@ namespace Fisheries.API
         public IQueryable<Event> GetEvents(string date = "")
         {
             if(string.IsNullOrEmpty(date))
-                return db.Events.Where(i => i.IsPublished).Include(e => e.Shop);
+                return db.Events.Where(i => i.IsPublished)
+                    .Include(e => e.Shop);
             else
             {
                 try
                 {
-                    var events = db.Events.Where(i => i.IsPublished).Where(e => e.EventFrom.HasValue).Include(e => e.Shop).ToList();
+                    var events = db.Events.Where(i => i.IsPublished).Include(e => e.Shop).ToList();
                     DateTime dt = DateTime.ParseExact(date, "ddMMyyyy", CultureInfo.InvariantCulture);
                     events = events.Where(e => e.EventFrom.GetValueOrDefault().Date == dt.Date).ToList();
                     return events.AsQueryable();

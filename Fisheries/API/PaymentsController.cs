@@ -28,7 +28,7 @@ namespace Fisheries.API
         string error;
         public PaymentsController()
         {
-            Pingpp.Pingpp.SetApiKey("sk_test_mLW9O8W5qnX1yXrLGSvHmLSG");
+            Pingpp.Pingpp.SetApiKey("sk_live_mzHOiTujLyfTSinr9K840G0K");
             try {
                 Pingpp.Pingpp.SetPrivateKeyPath("C:/RSA/rsa_private_key.pem");
             }

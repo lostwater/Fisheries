@@ -37,6 +37,13 @@ namespace Fisheries
                 o.OrderStatuId = 4;
             }
             db.SaveChanges();
+            var events = db.Events.Where(e => e.IsPublished).Where(e=>e.EventFrom.HasValue).ToList();
+            events = events.Where(e => e.EventFrom.Value.Date.DayOfYear <= DateTime.Now.DayOfYear && e.EventFrom.Value.Date.Year <= DateTime.Now.Year).ToList();
+            foreach (var e in events)
+            {
+                e.IsPublished = false;
+            }
+            db.SaveChanges();
 
         }
     }
