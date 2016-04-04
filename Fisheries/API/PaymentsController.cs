@@ -44,7 +44,7 @@ namespace Fisheries.API
             app.Add("id", "app_44qbz1PCezv54eT8");
             Dictionary<String, Object> param = new Dictionary<String, Object>();
             param.Add("order_no", order.Id.ToString());
-            param.Add("amount", order.OrderPrice);
+            param.Add("amount", order.OrderPrice*100);
             param.Add("channel", "alipay");
             param.Add("currency", "cny");
             param.Add("subject", order.Event.Name);
@@ -118,8 +118,8 @@ namespace Fisheries.API
                 order.Payment.isPaid = bool.Parse(paid.ToString());
                 order.Payment.isRefund = bool.Parse(refunded.ToString());
                 order.Payment.PaymentTime = DateTime.Now;
-                order.Payment.Amount = decimal.Parse(amount.ToString());
-                order.Payment.RefundAmount = decimal.Parse(refundedAmount.ToString());
+                order.Payment.Amount = decimal.Parse(amount.ToString())*100;
+                order.Payment.RefundAmount = decimal.Parse(refundedAmount.ToString())*100;
                 order.Payment.ChannelPaymentId = channelId.ToString();
                 if (order.Payment.isPaid && !order.Payment.isRefund)
                 {
