@@ -12,6 +12,7 @@ using System.IO;
 using System;
 using System.Web.Helpers;
 using System.Collections.Generic;
+using PagedList;
 
 namespace Fisheries.Controllers
 {
@@ -45,18 +46,24 @@ namespace Fisheries.Controllers
         }
 
         // GET: Events
-        public async Task<ActionResult> Index()
+        public ViewResult Index(int? page)
         {
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
             IQueryable<Event> events;
             if (User.IsInRole("Seller"))
             {
-                events = db.Events.Where(e => e.Shop.ApplicationUserId == User.Identity.GetUserId()).Include(e => e.Shop);
+                var userId = User.Identity.GetUserId();
+                events = db.Events.Where(e => e.Shop.ApplicationUserId == userId).Include(e => e.Shop).OrderByDescending(e => e.EventFrom);
             }
-            else
+            else 
             {
-                events = db.Events.Include(@e => @e.Shop);
+                events = db.Events.Include(@e => @e.Shop).OrderByDescending(e =>e.EventFrom);
             }
-            return View(await events.ToListAsync());
+            var PageEvents = events.ToPagedList(pageNumber, pageSize);
+            ViewBag.PageEvents = PageEvents;
+            return View(PageEvents);
+            //return View(await events.ToListAsync());
         }
 
         // GET: Events/Details/5
@@ -77,7 +84,16 @@ namespace Fisheries.Controllers
         // GET: Events/Create
         public ActionResult Create()
         {
-            ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name");
+            if (User.IsInRole("Seller"))
+            {
+                var userId = User.Identity.GetUserId();
+                ViewBag.ShopId = new SelectList(db.Shops.Where(s=>s.ApplicationUserId == userId), "Id", "Name");
+            }
+            else
+            {
+                ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name");
+            }
+            
             return View();
         }
 
@@ -117,7 +133,15 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
+            if (User.IsInRole("Seller"))
+            {
+                var userId = User.Identity.GetUserId();
+                ViewBag.ShopId = new SelectList(db.Shops.Where(s => s.ApplicationUserId == userId), "Id", "Name", @event.ShopId);
+            }
+            else
+            {
+                ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
+            }
             return View(@event);
         }
 
@@ -134,7 +158,7 @@ namespace Fisheries.Controllers
                 var date = @event.EventFrom;
                 if (date != null)
                 {
-                    date = date.Value.Date;
+                  
                     date = date - new TimeSpan(1, 0, 0, 0, 0);
                 }
                 @event.RegeristUntil = date;
@@ -147,6 +171,41 @@ namespace Fisheries.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", @event.ShopId);
+            return View(@event);
+        }
+
+        // GET: SellerEvents/Edit/5
+        public async Task<ActionResult> EditPositions(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Event @event = await db.Events.FindAsync(id);
+            if (@event == null)
+            {
+                return HttpNotFound();
+            }
+            return View(@event);
+        }
+
+        // POST: SellerEvents/Edit/5
+        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
+        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditPositions([Bind(Include = "Id,Positions")] Event @event)
+        {
+            if (ModelState.IsValid)
+            {
+                var _event = db.Events.Find(@event.Id);
+                var dif = @event.Positions - _event.Positions;
+                _event.Positions = @event.Positions;
+                _event.PositionsRemain = _event.PositionsRemain + dif;
+                //db.Entry(@event).State = EntityState.Modified;
+                await db.SaveChangesAsync();
+                return RedirectToAction("Index");
+            }
             return View(@event);
         }
 

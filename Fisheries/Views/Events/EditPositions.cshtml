@@ -1,22 +1,22 @@
 ﻿@model Fisheries.Models.Event
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "EditPositions";
+    int positionRemain = Model.PositionsRemain;
+    int positionToken = Model.Positions - Model.PositionsRemain;
 }
 
-<h2>Details</h2>
+
+<h2>EditPositions</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
 
 <div>
     <h4>Event</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Shop.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Shop.Name)
-        </dd>
 
         <dt>
             @Html.DisplayNameFor(model => model.Name)
@@ -66,14 +66,7 @@
             @Html.DisplayFor(model => model.Price)
         </dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Discount)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Discount)
-        </dd>
-
+    
         <dt>
             @Html.DisplayNameFor(model => model.DiscountPrice)
         </dt>
@@ -81,7 +74,6 @@
         <dd>
             @Html.DisplayFor(model => model.DiscountPrice)
         </dd>
-
 
         <dt>
             @Html.DisplayNameFor(model => model.OxygenTime)
@@ -108,11 +100,19 @@
         </dd>
 
         <dt>
+            @Html.DisplayNameFor(model => model.FishQuantity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FishQuantity)
+        </dd>
+
+        <dt>
             @Html.DisplayNameFor(model => model.Positions)
         </dt>
 
         <dd>
-            @Html.DisplayFor(model => model.Positions)
+            @(Html.Kendo().NumericTextBoxFor<int>(model => model.Positions).Min(positionToken).Max(10000).Value(positionRemain).Format("#").HtmlAttributes(new { style = "width: 100" }))
         </dd>
 
         <dt>
@@ -121,6 +121,13 @@
 
         <dd>
             @Html.DisplayFor(model => model.PositionsRemain)
+        </dd>
+        <dt>
+           
+        </dt>
+
+        <dd>
+            <label>将根据总钓位和已预订钓位自动更新</label>
         </dd>
 
         <dt>
@@ -140,8 +147,13 @@
         </dd>
 
     </dl>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Save" class="btn btn-default" />
+        </div>
+    </div>
 </div>
+}
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

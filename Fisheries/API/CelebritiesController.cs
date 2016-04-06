@@ -39,6 +39,19 @@ namespace Fisheries.API
             return Ok(videos);
         }
 
+        [HttpGet]
+        [ResponseType(typeof(List<Information>))]
+        [Route("{id}/Information")]
+        public async Task<IHttpActionResult> Information(int id)
+        {
+            Celebrity celebrity = await db.Celebrities.FindAsync(id);
+            if (celebrity == null)
+            {
+                return NotFound();
+            }
+            var information = await db.Information.Where(v => v.CelebrityId == id).ToListAsync();
+            return Ok(information);
+        }
 
 
         // GET: api/Celebrities/5

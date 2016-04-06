@@ -32,8 +32,10 @@ namespace Fisheries.Controllers
 
             if (User.IsInRole("Administrator"))
                 return View();
-            else
+            else if (User.IsInRole("Seller"))
                 return RedirectToAction("Index", "SellerPortal");
+            else
+                return RedirectToAction("Login");
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager,ApplicationRoleManager roleManager)

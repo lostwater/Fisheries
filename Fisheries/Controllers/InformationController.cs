@@ -70,7 +70,7 @@ namespace Fisheries.Controllers
             }
             else
             {
-                ViewBag.InformationTypeId = new SelectList(db.InformationTypes.Where(i => i.Id != 2), "Id", "Name");
+                ViewBag.InformationTypeId = new SelectList(db.InformationTypes, "Id", "Name");
             }
             
             //ViewBag.ApplicationUserId = new SelectList(db.InformationType.Where(u => u.Roles.Any(r => r.RoleId == roleId)), "Id", "UserName");

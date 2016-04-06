@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using Fisheries.Models;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
+using PagedList;
 
 namespace Fisheries.Controllers
 {
@@ -25,11 +27,42 @@ namespace Fisheries.Controllers
 
 
         // GET: Orders
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(int? page, int? datefilter)
         {
+            int pageSize = 10;
+            int pageNumber = (page ?? 1);
+            int filter = (datefilter ?? 1);
             var orders = db.Orders.Include(o => o.ApplicationUser).Include(o => o.Event).Include(o => o.OrderStatu).Include(o => o.Payment);
-            return View(await orders.ToListAsync());
+            if (User.IsInRole("Seller"))
+            {
+                var userId = User.Identity.GetUserId();
+                orders = orders.Where(o => o.Event.Shop.ApplicationUserId == userId);
+            }
+            DateTime filterFrom = DateTime.Now;
+            if (datefilter == 1)
+            {
+                 filterFrom = DateTime.Now - new TimeSpan(7, 0, 0, 0);
+                filterFrom = new DateTime(filterFrom.Year, filterFrom.Month, filterFrom.Day);
+            }
+            if (datefilter == 2)
+            {
+                 filterFrom = DateTime.Now - new TimeSpan(30, 0, 0, 0);
+                filterFrom = new DateTime(filterFrom.Year, filterFrom.Month, filterFrom.Day);
+            }
+            if (datefilter == 3)
+            {
+                 filterFrom = DateTime.Now - new TimeSpan(90, 0, 0, 0);
+                filterFrom = new DateTime(filterFrom.Year, filterFrom.Month, filterFrom.Day);
+            }
+            if (datefilter > 0)
+            {
+                ViewBag.datefilter = datefilter;
+                orders = orders.Where((o => DbFunctions.TruncateTime(o.Event.EventFrom) > DbFunctions.TruncateTime(filterFrom)));
+            } 
+            var pageOrders = orders.OrderByDescending(o=>o.Event.EventFrom).ToPagedList(pageNumber, pageSize);
+            return View(pageOrders);
         }
+
 
         // GET: Orders/Details/5
         public async Task<ActionResult> Details(int? id)
@@ -155,6 +188,43 @@ namespace Fisheries.Controllers
             db.Orders.Remove(order);
             await db.SaveChangesAsync();
             return RedirectToAction("Index");
+        }
+
+        // GET: SellerOrders/OrderVerify
+        public ActionResult OrderVerify()
+        {
+            return View();
+        }
+
+        // POST: SellerOrders/OrderVerify
+        // 为了防止“过多发布”攻击，请启用要绑定到的特定属性，有关 
+        // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> OrderVerify(OrderCodeVerifyModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var order = await db.Orders.FirstOrDefaultAsync(o => o.PhoneNumber == model.PhoneNumber
+                    && o.Code == model.Code
+                    && o.OrderStatuId == 2
+                    && !string.IsNullOrEmpty(o.Code)
+                );
+                if (order != null)
+                {
+                    order.OrderStatuId = 3;
+                    var result = await db.SaveChangesAsync();
+                    if (result > 0)
+                    {
+                        ViewBag.StatusMessage = "验证成功";
+                        ModelState.Clear();
+                        return View();
+                    }
+                       
+                }
+            }
+            ModelState.AddModelError("", "无效的手机号或验证码。");
+            return View(model);
         }
 
         protected override void Dispose(bool disposing)

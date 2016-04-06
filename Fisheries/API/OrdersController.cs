@@ -114,6 +114,8 @@ namespace Fisheries.API
             return CreatedAtRoute("DefaultApi", new { id = order.Id }, order);
         }
 
+
+
         // POST: api/Orders/CreateOrder
         [Route("CreateOrder/{eventId}")]
         [ResponseType(typeof(Order))]
@@ -128,6 +130,13 @@ namespace Fisheries.API
             {
                 return BadRequest();
             }
+            if (_event.PositionsRemain == 0)
+            {
+                return BadRequest("已无剩余钓位");
+            }
+            //Double Check position
+            _event.PositionsRemain = _event.Positions - db.Orders.Count(o => o.EventId == _event.Id && o.OrderStatuId != 4);
+            db.SaveChanges();
             if (_event.PositionsRemain == 0)
             {
                 return BadRequest("已无剩余钓位");

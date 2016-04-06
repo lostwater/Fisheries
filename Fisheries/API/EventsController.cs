@@ -37,7 +37,7 @@ namespace Fisheries.API
                 {
                     var events = db.Events.Where(i => i.IsPublished).Include(e => e.Shop).ToList();
                     DateTime dt = DateTime.ParseExact(date, "ddMMyyyy", CultureInfo.InvariantCulture);
-                    events = events.Where(e => e.EventFrom.GetValueOrDefault().Date == dt.Date).ToList();
+                    events = events.Where(e => e.EventFrom == dt.Date).ToList();
                     return events.AsQueryable();
                 }
                 catch

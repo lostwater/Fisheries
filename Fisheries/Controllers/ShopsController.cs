@@ -9,20 +9,64 @@ using System.Web;
 using System.Web.Mvc;
 using Fisheries.Models;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 
 namespace Fisheries.Controllers
 {
     public class ShopsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private ApplicationSignInManager _signInManager;
+        private ApplicationUserManager _userManager;
+        private ApplicationRoleManager _roleManager;
+
+        public ApplicationSignInManager SignInManager
+        {
+            get
+            {
+                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+            }
+            private set
+            {
+                _signInManager = value;
+            }
+        }
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
+        }
+
+        public ApplicationRoleManager RoleManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().Get<ApplicationRoleManager>();
+            }
+            private set
+            {
+                _roleManager = value;
+            }
+        }
 
         // GET: Shops
         public async Task<ActionResult> Index()
         {
-            var shops = db.Shops.Include(s => s.ApplicationUser);
             var userId = Request.QueryString["userId"];
-            if (!string.IsNullOrEmpty(userId))
-                shops = shops.Where(s => s.ApplicationUserId == userId);
+            var shops = db.Shops.Include(s => s.ApplicationUser);
+            if (User.IsInRole("Seller"))
+            {
+                userId = User.Identity.GetUserId();
+               
+            }
+            shops = shops.Where(s => s.ApplicationUserId == userId);
             return View(await shops.ToListAsync());
         }
 
@@ -106,7 +150,13 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.ApplicationUserId = new SelectList(db.Users, "Id", "UserName", shop.ApplicationUserId);
+            var roleManager = HttpContext.GetOwinContext().GetUserManager<ApplicationRoleManager>();
+            string roleId;
+            if (!roleManager.RoleExists("Seller"))
+                roleManager.Create(new ApplicationRole("Seller"));
+            roleId = roleManager.FindByName("Seller").Id;
+
+            ViewBag.ApplicationUserId = new SelectList(db.Users.Where(u => u.Roles.Any(r => r.RoleId == roleId)), "Id", "UserName", shop.ApplicationUserId);
             return View(shop);
         }
 

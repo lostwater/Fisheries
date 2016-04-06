@@ -295,6 +295,8 @@ namespace Fisheries.API
             return Ok();
         }
 
+
+
         // POST api/Account/SetPassword
         [Route("SetPassword")]
         public async Task<IHttpActionResult> SetPassword(SetPasswordBindingModel model)
@@ -503,6 +505,36 @@ namespace Fisheries.API
             }
             var role = RoleManager.FindByName("Buyer");
             await UserManager.AddToRoleAsync(UserManager.FindByName(user.UserName).Id, role.Name);
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [Route("ResetPassword")]
+        public async Task<IHttpActionResult> ResetPassword(UserResetPasswordModel model)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (!VerifySMS(model.phoneNumber, model.verifyCode))
+            {
+                return BadRequest("验证码无效");
+            }
+            var user = new ApplicationDbContext().Users.First(u => u.PhoneNumber == model.phoneNumber);
+            if(user == null)
+            {
+                return BadRequest("找不到用户");
+            }
+
+            string resetToken = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+            IdentityResult result = await UserManager.ResetPasswordAsync(user.Id, resetToken, model.password);
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);

@@ -13,15 +13,17 @@ namespace Fisheries.Models
         [Display(Name = "标题图")]
         public string AvatarUrl { get; set; }
 
+        [Required(ErrorMessage="名称不能为空")]
         [Display(Name = "放钓名称")]
         public string Name { get; set; }
-
+        [Required(ErrorMessage = "开始时间不能为空")]
         [DataType(DataType.DateTime)]
         [Display(Name = "活动开始时间")]
-        public DateTime? EventFrom { get; set; }
+        public DateTime EventFrom { get; set; }
+        [Required(ErrorMessage = "结束时间不能为空")]
         [DataType(DataType.DateTime)]
         [Display(Name = "活动结束时间")]
-        public DateTime? EvenUntil { get; set; }
+        public DateTime EvenUntil { get; set; }
         [DataType(DataType.DateTime)]
         [Display(Name = "报名开始")]
         public DateTime? RegeristFrom { get; set; }

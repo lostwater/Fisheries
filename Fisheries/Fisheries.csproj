@@ -314,6 +314,7 @@
     <Compile Include="Helper\CalendarExtensions.cs" />
     <Compile Include="Helper\GuidEncoder.cs" />
     <Compile Include="Helper\IdentityExtensions.cs" />
+    <Compile Include="Helper\IPageExten.cs" />
     <Compile Include="Helper\MobSMS.cs" />
     <Compile Include="Helper\SMSSender.cs" />
     <Compile Include="Migrations\201603211220469_Init.cs" />
@@ -339,6 +340,18 @@
     <Compile Include="Migrations\201603271506370_Init5.cs" />
     <Compile Include="Migrations\201603271506370_Init5.Designer.cs">
       <DependentUpon>201603271506370_Init5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604050324361_Init6.cs" />
+    <Compile Include="Migrations\201604050324361_Init6.Designer.cs">
+      <DependentUpon>201604050324361_Init6.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604050432496_Init7.cs" />
+    <Compile Include="Migrations\201604050432496_Init7.Designer.cs">
+      <DependentUpon>201604050432496_Init7.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604050955189_Init8.cs" />
+    <Compile Include="Migrations\201604050955189_Init8.Designer.cs">
+      <DependentUpon>201604050955189_Init8.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -1814,6 +1827,9 @@
     <Content Include="Views\Ads\FameHall.cshtml" />
     <Content Include="Views\Ads\All.cshtml" />
     <Content Include="Views\Ads\HomeCreate.cshtml" />
+    <Content Include="Views\Events\EditPositions.cshtml" />
+    <Content Include="Views\Manage\ResetUserPassowrd.cshtml" />
+    <Content Include="Views\Orders\OrderVerify.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Project_Readme.html" />
@@ -1842,6 +1858,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201603271506370_Init5.resx">
       <DependentUpon>201603271506370_Init5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604050324361_Init6.resx">
+      <DependentUpon>201604050324361_Init6.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604050432496_Init7.resx">
+      <DependentUpon>201604050432496_Init7.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604050955189_Init8.resx">
+      <DependentUpon>201604050955189_Init8.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

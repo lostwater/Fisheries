@@ -13,6 +13,14 @@ namespace Fisheries.Models
         public string ExternalAccessToken { get; set; }
     }
 
+    public class UserResetPasswordModel
+    {
+        public string phoneNumber { get; set; }
+        public string verifyCode { get; set; }
+        public string password { get; set; }
+        public string confirmPassword { get; set; }
+    }
+
     public class ChangePasswordBindingModel
     {
         [Required]

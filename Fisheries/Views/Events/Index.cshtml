@@ -1,5 +1,7 @@
-﻿@model IEnumerable<Fisheries.Models.Event>
-
+﻿@*@model IEnumerable<Fisheries.Models.Event>*@
+@model IPagedList<Fisheries.Models.Event>
+@using PagedList.Mvc;
+@using PagedList
 @{
     ViewBag.Title = "Index";
 }
@@ -13,9 +15,6 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.AvatarUrl)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Shop.Name)
         </th>
         <th>
@@ -28,22 +27,10 @@
             @Html.DisplayNameFor(model => model.EvenUntil)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.RegeristFrom)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RegeristUntil)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.Price)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Discount)
-        </th>
-        <th>
             @Html.DisplayNameFor(model => model.DiscountPrice)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.OxygenTime)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.BuyPrice)
@@ -57,20 +44,11 @@
         <th>
             @Html.DisplayNameFor(model => model.PositionsRemain)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Intro)
-        </th>
         <th></th>
     </tr>
 
 @foreach (var item in Model) {
     <tr>
-        <td>
-            <img width="100" height="100" src="@item.AvatarUrl" />
-        </td>
         <td>
             @Html.DisplayFor(modelItem => item.Shop.Name)
         </td>
@@ -84,22 +62,10 @@
             @Html.DisplayFor(modelItem => item.EvenUntil)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.RegeristFrom)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.RegeristUntil)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.Price)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Discount)
-        </td>
-        <td>
             @Html.DisplayFor(modelItem => item.DiscountPrice)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.OxygenTime)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.BuyPrice)
@@ -114,17 +80,50 @@
             @Html.DisplayFor(modelItem => item.PositionsRemain)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Intro)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+            @if (Request.IsAuthenticated)
+
+            {
+                if (User.IsInRole("Admin"))
+                {
+                   @Html.ActionLink("编辑", "Edit", new { id = item.Id })
+                    <text>|</text>
+                    @Html.ActionLink("详细", "Details", new { id = item.Id })
+                    <text>|</text>
+                    @Html.ActionLink("删除", "Delete", new { id = item.Id })
+                 }
+                 if (User.IsInRole("Seller") && !item.IsPublished)
+                 {
+                    @Html.ActionLink("编辑", "Edit", new { id = item.Id })
+                    <text>|</text>
+                    @Html.ActionLink("详细", "Details", new { id = item.Id })
+                    <text>|</text>
+                    @Html.ActionLink("删除", "Delete", new { id = item.Id })
+                }
+                if (User.IsInRole("Seller")&&item.IsPublished)
+                {
+                    @Html.ActionLink("修改位置", "EditPositions", new { id = item.Id })
+                    <text>|</text>
+                    @Html.ActionLink("详细", "Details", new { id = item.Id })
+                    <text>|</text>
+                    @Html.ActionLink("删除", "Delete", new { id = item.Id })
+                }
+            }
+            @* For unknown user *@
+            else
+            {
+                <Ul Class="SubMenuItem">
+                    <li> this menu item is for Unknown user</li>
+                </Ul>
+            }
+
+
         </td>
     </tr>
 }
 
 </table>
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index",
+    new { page }))

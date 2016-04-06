@@ -49,6 +49,7 @@
         </td>
         
         <td>
+            @Html.ActionLink("新密码", "ResetUserPassowrd", "Manage", new { id = item.Id }, null) | 
             @*@Html.ActionLink("Edit", "Edit", new { id=item.Id }) |*@
             <a href=@("../Shops?userId="+ item.Id)>他的渔场</a>
             @*@Html.ActionLink("他的渔场", "./Shops?userId="+ item.Id);

@@ -105,7 +105,7 @@ namespace Fisheries.Seller.Controllers
                 var date = @event.EventFrom;
                 if (date != null)
                 {
-                    date = date.Value.Date;
+                    
                     date = date - new TimeSpan(1, 0, 0, 0, 0);
                 }
                 @event.RegeristUntil = date;

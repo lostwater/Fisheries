@@ -210,6 +210,7 @@ namespace Fisheries.Controllers
             }
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
         }
+       
 
         //
         // GET: /Manage/ChangePassword
@@ -241,6 +242,75 @@ namespace Fisheries.Controllers
             AddErrors(result);
             return View(model);
         }
+
+        //
+        // GET: /Manage/SetPassword
+        [Authorize]
+        public ActionResult ResetUserPassowrd(String Id)
+        {
+            //ViewBag.StatusMessage = Message;
+            AdminResetPasswordModel model = new AdminResetPasswordModel();
+            if (!User.IsInRole("Administrator"))
+            {
+                var userId = User.Identity.GetUserId();
+                var user = UserManager.FindById(userId);
+                if (user != null)
+                {
+                    model.UserName = user.UserName;
+                    model.UserId = userId;
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(Id))
+                {
+                    var user = UserManager.FindById(Id);
+                    if (user != null)
+                    {
+                        model.UserName = user.UserName;
+                        model.UserId = user.Id;
+                    }
+                    else
+                        return RedirectToAction("ResetUserPassowrd");
+                }
+                else
+                {
+                    var userId = User.Identity.GetUserId();
+                    var user = UserManager.FindById(userId);
+                    if (user != null)
+                    {
+                        model.UserName = user.UserName;
+                        model.UserId = userId;
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+        //
+        // POST: /Manage/SetPassword
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ResetUserPassowrd(AdminResetPasswordModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                string resetToken = await UserManager.GeneratePasswordResetTokenAsync(model.UserId);
+                IdentityResult passwordChangeResult = await UserManager.ResetPasswordAsync(model.UserId, resetToken, model.NewPassword);
+          
+                if (passwordChangeResult.Succeeded)
+                {
+                    ViewBag.StatusMessage = "重置密码成功";
+                    return View(model);
+                }
+                AddErrors(passwordChangeResult);
+            }
+
+            // 如果我们进行到这一步时某个地方出错，则重新显示表单
+            return View(model);
+        }
+
 
         //
         // GET: /Manage/SetPassword
