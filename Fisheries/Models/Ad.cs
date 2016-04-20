@@ -11,6 +11,8 @@ namespace Fisheries.Models
         public int Id { get; set; }
         [Display(Name = "广告图")]
         public string AvatarUrl { get; set; }
+        [Display(Name = "名称")]
+        public string Name { get; set; }
         public int AdCat { get; set; }
         public int AdType { get; set; }
         public int? EventId { get; set; }

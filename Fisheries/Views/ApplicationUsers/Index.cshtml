@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Fisheries.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>总用户数：@ViewBag.userCount</h2>
+
+<p>
+    @using (Html.BeginForm())
+    {
+    <p>
+        手机号:
+         @Html.TextBox("phone") 
+        <input type="submit" value="查找" />
+    </p>
+    }
+    
+</p>
+<table class="table">
+    <tr>
+  
+  
+        <th>
+            手机号
+        </th>
+        <th>
+            用户名
+        </th>
+        <th>
+           注册时间
+        </th>
+        <th></th>
+    </tr>
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.PhoneNumber)
+        </td>
+      
+        <td>
+            @Html.DisplayFor(modelItem => item.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CreatedTime)
+        </td>
+        <td>
+            @Html.ActionLink("修改密码", "ResetUserPassowrd", new { id = item.Id }) 
+        </td>
+    </tr>
+    }
+}
+
+</table>
+<br/>
+注册日期2016年4月20日21:30后注册的有效

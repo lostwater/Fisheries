@@ -64,9 +64,10 @@ namespace Fisheries.Controllers
             if (User.IsInRole("Seller"))
             {
                 userId = User.Identity.GetUserId();
-               
+                shops = shops.Where(s => s.ApplicationUserId == userId);
+
             }
-            shops = shops.Where(s => s.ApplicationUserId == userId);
+           
             return View(await shops.ToListAsync());
         }
 
@@ -165,10 +166,11 @@ namespace Fisheries.Controllers
         // 详细信息，请参阅 http://go.microsoft.com/fwlink/?LinkId=317598。
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "Id,Name,Address,Intro,Description,ApplicationUserId")] Shop shop)
+        public async Task<ActionResult> Edit(Shop shop)
         {
             if (ModelState.IsValid)
             {
+               // var c = Coor;
                 db.Entry(shop).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");

@@ -24,6 +24,10 @@ namespace Fisheries.Models
         public decimal Surface { get; set; }
         [Display(Name = "是否已认证")]
         public bool Verified { get; set; }
+        [Display(Name = "经度")]
+        public double Longitude { get; set; }
+        [Display(Name = "纬度")]
+        public double Latitude { get; set; }
 
         [Display(Name = "商家用户ID")]
         public string ApplicationUserId { get; set; }

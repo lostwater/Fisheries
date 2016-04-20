@@ -13,7 +13,7 @@ namespace Fisheries.API
     public class LiveController : ApiController
     {
         [HttpGet]
-        public List<Live> GetLive()
+        public IQueryable<Live> GetLive(int page = 0, int pageSize = 100)
         {
             var lcsdk = new Gandalf.LCUploader("nal4hqaahb", "2e44b05a1d3b751efc6a3a3eb1654e79");
             Dictionary<string, object> args = new Dictionary<string, object>();
@@ -26,7 +26,7 @@ namespace Fisheries.API
             //return strResult.Replace("\\", "");
             List<Live> list = JsonConvert.DeserializeObject<List<Live>>(strResult);
 
-            return list.Where(l => l.activityStatus != 3).ToList();
+            return list.Where(l => l.activityStatus != 3).ToList().Skip(page * pageSize).Take(pageSize).AsQueryable();
 
         }
     }

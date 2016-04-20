@@ -14,6 +14,7 @@ namespace Fisheries.Models
         public ApplicationDbContext()
             : base("fisheries_dbEntities", throwIfV1Schema: false)
         {
+            this.Configuration.LazyLoadingEnabled = true;
             //this.Database.Connection.ConnectionString = this.Database.Connection.ConnectionString + ";Password = jimmysill";
         }
 
@@ -41,6 +42,8 @@ namespace Fisheries.Models
         public System.Data.Entity.DbSet<Fisheries.Models.Celebrity> Celebrities { get; set; }
 
         public System.Data.Entity.DbSet<Fisheries.Models.Video> Videos { get; set; }
+
+       // public System.Data.Entity.DbSet<Fisheries.Models.ApplicationUser> ApplicationUsers { get; set; }
 
         //public System.Data.Entity.DbSet<Client> Clients { get; set; }
 

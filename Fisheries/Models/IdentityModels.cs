@@ -5,7 +5,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
+using System;
 
 namespace Fisheries.Models
 {
@@ -13,7 +13,8 @@ namespace Fisheries.Models
     public class ApplicationUser : IdentityUser
     {
         public string Avatar { get; set; }
-
+        public DateTime CreatedTime { get; set; }
+        public string SignupClient { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager, string authenticationType)
         {
             // 请注意，authenticationType 必须与 CookieAuthenticationOptions.AuthenticationType 中定义的相应项匹配

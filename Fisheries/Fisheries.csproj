@@ -293,6 +293,7 @@
     <Compile Include="API\OrdersController.cs" />
     <Compile Include="API\AccountApiController.cs" />
     <Compile Include="Controllers\AdsController.cs" />
+    <Compile Include="Controllers\ApplicationUsersController.cs" />
     <Compile Include="Controllers\CelebritiesController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -352,6 +353,18 @@
     <Compile Include="Migrations\201604050955189_Init8.cs" />
     <Compile Include="Migrations\201604050955189_Init8.Designer.cs">
       <DependentUpon>201604050955189_Init8.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604161345553_Init9.cs" />
+    <Compile Include="Migrations\201604161345553_Init9.Designer.cs">
+      <DependentUpon>201604161345553_Init9.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604171159530_Init10.cs" />
+    <Compile Include="Migrations\201604171159530_Init10.Designer.cs">
+      <DependentUpon>201604171159530_Init10.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201604201305028_Init11.cs" />
+    <Compile Include="Migrations\201604201305028_Init11.Designer.cs">
+      <DependentUpon>201604201305028_Init11.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -1618,11 +1631,6 @@
     <Content Include="Views\Events\Details.cshtml" />
     <Content Include="Views\Events\Edit.cshtml" />
     <Content Include="Views\Events\Index.cshtml" />
-    <Content Include="Views\Shops\Create.cshtml" />
-    <Content Include="Views\Shops\Delete.cshtml" />
-    <Content Include="Views\Shops\Details.cshtml" />
-    <Content Include="Views\Shops\Edit.cshtml" />
-    <Content Include="Views\Shops\Index.cshtml" />
     <Content Include="Views\Account\CreateSeller.cshtml" />
     <Content Include="Views\SellerEvents\Create.cshtml" />
     <Content Include="Views\SellerEvents\Delete.cshtml" />
@@ -1830,6 +1838,17 @@
     <Content Include="Views\Events\EditPositions.cshtml" />
     <Content Include="Views\Manage\ResetUserPassowrd.cshtml" />
     <Content Include="Views\Orders\OrderVerify.cshtml" />
+    <Content Include="Views\Shops\Create.cshtml" />
+    <Content Include="Views\Shops\Delete.cshtml" />
+    <Content Include="Views\Shops\Details.cshtml" />
+    <Content Include="Views\Shops\Edit.cshtml" />
+    <Content Include="Views\Shops\Index.cshtml" />
+    <Content Include="Views\ApplicationUsers\Create.cshtml" />
+    <Content Include="Views\ApplicationUsers\Delete.cshtml" />
+    <Content Include="Views\ApplicationUsers\Details.cshtml" />
+    <Content Include="Views\ApplicationUsers\Edit.cshtml" />
+    <Content Include="Views\ApplicationUsers\Index.cshtml" />
+    <Content Include="Views\ApplicationUsers\ResetUserPassowrd.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Project_Readme.html" />
@@ -1868,6 +1887,15 @@
     <EmbeddedResource Include="Migrations\201604050955189_Init8.resx">
       <DependentUpon>201604050955189_Init8.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604161345553_Init9.resx">
+      <DependentUpon>201604161345553_Init9.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604171159530_Init10.resx">
+      <DependentUpon>201604171159530_Init10.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604201305028_Init11.resx">
+      <DependentUpon>201604201305028_Init11.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gandalf\Gandalf.csproj">
@@ -1883,6 +1911,7 @@
       <Name>sdk_csharp</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

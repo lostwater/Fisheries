@@ -80,43 +80,34 @@
             @Html.DisplayFor(modelItem => item.PositionsRemain)
         </td>
         <td>
-            @if (Request.IsAuthenticated)
-
+            @if (User.IsInRole("Administrator") && item.EventFrom > DateTime.Now)
             {
-                if (User.IsInRole("Admin"))
-                {
-                   @Html.ActionLink("编辑", "Edit", new { id = item.Id })
-                    <text>|</text>
-                    @Html.ActionLink("详细", "Details", new { id = item.Id })
-                    <text>|</text>
-                    @Html.ActionLink("删除", "Delete", new { id = item.Id })
-                 }
-                 if (User.IsInRole("Seller") && !item.IsPublished)
-                 {
-                    @Html.ActionLink("编辑", "Edit", new { id = item.Id })
-                    <text>|</text>
-                    @Html.ActionLink("详细", "Details", new { id = item.Id })
-                    <text>|</text>
-                    @Html.ActionLink("删除", "Delete", new { id = item.Id })
-                }
-                if (User.IsInRole("Seller")&&item.IsPublished)
-                {
-                    @Html.ActionLink("修改位置", "EditPositions", new { id = item.Id })
-                    <text>|</text>
-                    @Html.ActionLink("详细", "Details", new { id = item.Id })
-                    <text>|</text>
-                    @Html.ActionLink("删除", "Delete", new { id = item.Id })
-                }
+                @Html.ActionLink("编辑", "Edit", new { id = item.Id })
+                <text>|</text>
+                @Html.ActionLink("详细", "Details", new { id = item.Id })
+                <text>|</text>
+                @Html.ActionLink("删除", "Delete", new { id = item.Id })
             }
-            @* For unknown user *@
-            else
+            @if (User.IsInRole("Seller") && !item.IsPublished && item.EventFrom > DateTime.Now)
             {
-                <Ul Class="SubMenuItem">
-                    <li> this menu item is for Unknown user</li>
-                </Ul>
+                @Html.ActionLink("编辑", "Edit", new { id = item.Id })
+                <text>|</text>
+                @Html.ActionLink("详细", "Details", new { id = item.Id })
+                <text>|</text>
+                @Html.ActionLink("删除", "Delete", new { id = item.Id })
             }
-
-
+            @if (User.IsInRole("Seller" )&&item.IsPublished && item.EventFrom > DateTime.Now)
+            {
+                @Html.ActionLink("修改位置", "EditPositions", new { id = item.Id })
+                <text>|</text>
+                @Html.ActionLink("详细", "Details", new { id = item.Id })
+                <text>|</text>
+                @Html.ActionLink("删除", "Delete", new { id = item.Id })
+            }
+            @if (item.EventFrom < DateTime.Now)
+            {
+                @Html.ActionLink("详细", "Details", new { id = item.Id })
+            }
         </td>
     </tr>
 }

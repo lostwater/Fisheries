@@ -25,6 +25,12 @@ namespace Fisheries.Controllers
 
         }
 
+        public String Content(int Id)
+        {
+            var i = db.Information.Find(Id);
+            return "<body><style>img{display: inline; height: auto; max-width: 100%;}</style>" + i.Content + "</body>";
+        }
+
         // GET: Information
         public ViewResult Index(int? page)
         {

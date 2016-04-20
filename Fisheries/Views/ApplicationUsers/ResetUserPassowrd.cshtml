@@ -1,0 +1,44 @@
+﻿@model Fisheries.Models.AdminResetPasswordModel
+@{
+    ViewBag.Title = "重置密码";
+}
+
+<h2>@ViewBag.Title。</h2>
+@Html.ActionLink("返回", "Index") 
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <h4>重置密码</h4>
+    <h3 class="text-success">@ViewBag.StatusMessage</h3>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    @Html.HiddenFor(m=>m.UserId)
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @readonly = true})
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.NewPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.NewPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="设置密码" class="btn btn-default" />
+        </div>
+    </div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

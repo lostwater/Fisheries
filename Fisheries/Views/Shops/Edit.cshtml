@@ -6,7 +6,6 @@
 
 <h2>Edit</h2>
 
-
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -60,13 +59,49 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Verified, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Verified, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Verified, "", new { @class = "text-danger" })
+                <div class="checkbox">
+                    @Html.EditorFor(model => model.Verified)
+                    @Html.ValidationMessageFor(model => model.Verified, "", new { @class = "text-danger" })
+                </div>
             </div>
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ApplicationUserId, "ApplicationUserId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.Label("经纬度", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBox("coor",Model.Longitude+","+Model.Latitude,new { @onchange = "OnChangeEvent()", @class = "form-control" })
+            </div>
+        </div>
+        <script type="text/javascript">
+            function OnChangeEvent() {
+                var coor = document.getElementById('coor').value;
+                var long = coor.split(",")[0];
+                var la = coor.split(",")[1];
+                document.getElementById('Longitude').value = long;
+                document.getElementById('Latitude').value = la;
+                
+            }
+        </script>
+
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Longitude, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Longitude,  new { @class = "form-control", @readonly = "readonly" } )
+                @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Latitude, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.Latitude, new { @class = "form-control", @readonly = "readonly" } )
+                @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ApplicationUserId, "渔场主用户名", htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("ApplicationUserId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ApplicationUserId, "", new { @class = "text-danger" })
@@ -84,7 +119,3 @@
 <div>
     @Html.ActionLink("Back to List", "Index")
 </div>
-
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}

@@ -45,7 +45,9 @@
             @Html.DisplayFor(modelItem => item.CreatedTime)
         </td>
         <td>
-            @Html.ActionLink("查看或编辑", "Edit", new { id=item.Id }) |
+
+             @Html.ActionLink("查看内容", "Content", new { id = item.Id }) |
+            @Html.ActionLink("编辑", "Edit", new { id=item.Id }) |
             @*@Html.ActionLink("详情", "Details", new { id=item.Id }) |*@
             @Html.ActionLink("删除", "Delete", new { id=item.Id })
         </td>

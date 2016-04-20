@@ -26,26 +26,20 @@ namespace Fisheries.API
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/EventsApi
-        public IQueryable<Event> GetEvents(string date = "")
+        public IQueryable<Event> GetEvents(int page = 0, int pageSize = 100, string date = "")
         {
-            if(string.IsNullOrEmpty(date))
-                return db.Events.Where(i => i.IsPublished)
-                    .Include(e => e.Shop);
-            else
+            var events = db.Events.Where(e => e.IsPublished).Include(e => e.Shop);
+
+            if (!string.IsNullOrEmpty(date))
             {
                 try
                 {
-                    var events = db.Events.Where(i => i.IsPublished).Include(e => e.Shop).ToList();
                     DateTime dt = DateTime.ParseExact(date, "ddMMyyyy", CultureInfo.InvariantCulture);
-                    events = events.Where(e => e.EventFrom == dt.Date).ToList();
-                    return events.AsQueryable();
+                    events = events.Where(e => DbFunctions.TruncateTime(e.EventFrom).GetValueOrDefault().Date == DbFunctions.TruncateTime(dt.Date).GetValueOrDefault().Date);
                 }
-                catch
-                {
-                    return db.Events.Include(e => e.Shop);
-                }
+                catch { }
             }
-            //else
+            return events.OrderByDescending(e=>e.EventFrom).Skip(page * pageSize).Take(pageSize);
              
         }
 
@@ -63,6 +57,36 @@ namespace Fisheries.API
 
             return Ok(@event);
         }
+
+     
+
+        [HttpGet]
+        [Route("EventStatu/{id}")]
+        [ResponseType(typeof(EventStatu))]
+        public async Task<IHttpActionResult> GetEventStatu(int id)
+        {
+            EventStatu statu = new EventStatu();
+            var userId = User.Identity.GetUserId();
+            if ((await db.Events.FindAsync(id)).PositionsRemain == 0)
+            {
+                statu.isOrderable = false;
+                statu.Message = "名额已满";
+                return Ok(statu);
+            }
+            if (await db.Orders.AnyAsync(o => o.EventId == id && o.OrderStatuId != 4 && o.ApplicationUserId == userId))
+            {
+                statu.isOrderable = false;
+                statu.Message = "你已报名";
+                return Ok(statu);
+            }
+            else
+            {
+                statu.isOrderable = true;
+                statu.Message = "我要报名";
+                return Ok(statu);
+            }
+        }
+
 
         [HttpGet]
         [Route("isOrdered/{id}")]

@@ -19,23 +19,24 @@ namespace Fisheries.API
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: api/Celebrities
-        public IQueryable<Celebrity> GetCelebrities()
+        public IQueryable<Celebrity> GetCelebrities(int page = 0, int pageSize = 100)
         {
-            return db.Celebrities;
+            return db.Celebrities.ToList().Skip(page * pageSize).Take(pageSize).AsQueryable();
+            //.Include(c=>c..Skip(page * pageSize).Take(pageSize);
         }
 
 
        [HttpGet]
-       [ResponseType(typeof(List<Video>))]
+       [ResponseType(typeof(IQueryable<Video>))]
        [Route("{id}/Videos")]
-        public async Task<IHttpActionResult> Videos(int id)
+        public async Task<IHttpActionResult> Videos(int id, int page = 0, int pageSize = 100)
         {
             Celebrity celebrity = await db.Celebrities.FindAsync(id);
             if (celebrity == null)
             {
                 return NotFound();
             }
-            var videos = await db.Videos.Where(v => v.CelebrityId == id).ToListAsync();
+            var videos =  db.Videos.Where(v => v.CelebrityId == id).OrderByDescending(v => v.Id).Skip(page * pageSize).Take(pageSize);
             return Ok(videos);
         }
 

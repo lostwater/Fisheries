@@ -49,6 +49,15 @@ namespace Fisheries
                 e.IsPublished = false;
             }
             db.SaveChanges();
+            events = events.Where(e => e.Shop == null).ToList();
+            foreach (var e in events)
+            {
+                e.IsPublished = false;
+            }
+            db.SaveChanges();
+
+
+
 
 
         }

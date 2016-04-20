@@ -112,7 +112,7 @@ namespace Fisheries.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-
+            ViewBag.AdCat = new SelectList(AdCat.AppAdCats(), "id", "name",ad.AdCat);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
             ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
             return View(ad);
@@ -159,6 +159,7 @@ namespace Fisheries.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.AdCat = new SelectList(AdCat.AppAdCats(), "id", "name",ad.AdCat);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
             ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
             return View(ad);
@@ -177,6 +178,7 @@ namespace Fisheries.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
+            ViewBag.AdCat = new SelectList(AdCat.AppAdCats(), "id", "name", ad.AdCat);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", ad.EventId);
             ViewBag.InformationId = new SelectList(db.Information, "Id", "Title", ad.InformationId);
             return View(ad);

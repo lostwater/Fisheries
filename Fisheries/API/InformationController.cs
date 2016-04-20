@@ -21,9 +21,34 @@ namespace Fisheries.API
 
         // GET: api/InformationApi
         [EnableQuery]
-        public IQueryable<Information> GetInformation()
+        public IQueryable<Information> GetInformation(int page = 0, int pageSize = 100, int typeId = 0, int celebrityId = 0)
         {
-            return db.Information.Where(i=>i.IsPublished).OrderByDescending(i => i.Id).Include(i => i.InformationType).AsQueryable();
+            var info = db.Information.Where(i => i.IsPublished).Include(i => i.InformationType);
+            if (typeId != 0)
+                info = info.Where(i => i.InformationTypeId == typeId);
+            if (celebrityId != 0)
+                info = info.Where(i => i.CelebrityId == celebrityId);
+            var result = info.OrderByDescending(i => i.Id).Skip(page * pageSize).Take(pageSize).ToList();
+
+            return result.Select(i =>
+                new Information()
+                {
+                    Id = i.Id,
+                    CreatedTime = i.CreatedTime,
+                    PublishedTime = i.PublishedTime,
+                    ApplicationUser = i.ApplicationUser,
+                    ApplicationUserId = i.ApplicationUserId,
+                    Celebrity = i.Celebrity,
+                    CelebrityId = i.CelebrityId,
+                    InformationType = i.InformationType,
+                    InformationTypeId = i.InformationTypeId,
+                    Intro = i.Intro,
+                    Title = i.Title,
+                    ImageUrl = i.ImageUrl,
+                    Content = i.Content,
+                    IsPublished = i.IsPublished,
+                    VideoUrl = i.VideoUrl
+                }).ToList().AsQueryable();
 
         }
 

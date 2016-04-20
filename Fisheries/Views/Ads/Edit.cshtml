@@ -1,63 +1,142 @@
 ﻿@model Fisheries.Models.Ad
 
+
+
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Create";
 }
 
-<h2>选择赛事活动</h2>
+@Scripts.Render("~/bundles/jqueryform")
+@Scripts.Render("~/bundles/jcrop")
+@Scripts.Render("~/bundles/events")
+@Styles.Render("~/Content/jcrop")
+@Styles.Render("~/Content/ad")
+
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+<h2>创建广告</h2>
+@using (Ajax.BeginRouteForm("Default", new { controller = "ImageUploader", action = "_Upload" }, new AjaxOptions() { HttpMethod = "POST" }, new { enctype = "multipart/form-data", id = "avatar-upload-form" }))
+
+{
+    @Html.AntiForgeryToken()
+    <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            @Html.LabelFor(model => model.AvatarUrl, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                <input type="file" name="files" /><br>
+                <div class="upload-file-notice">最大大小: <span id="avatar-max-size"></span> MB</div>
+                <div id="avatar-upload-box">
+                    <div class="upload-progress col-md-6 hidden">
+                        <div class="upload-percent-value pull-left">0%</div>
+                        <div class="upload-percent-bar pull-left"></div>
+                    </div>
+                    <div id="upload-status"></div>
+                </div>
+                <div id="avatar-crop-box" class="hidden">
+                    <p>
+                        <img src="" id="crop-avatar-target" alt="Uploaded image" />
+                        <div id="preview-pane" class="hidden">
+                            <div class="preview-container">
+
+                                <img src="" class="jcrop-preview" alt="Preview" />
+                            </div>
+                        </div>
+                    </p>
+                    <p><button class="btn btn-default" onclick="saveAvatar('4');">保存</button></p>
+                </div>
+                @*<div id="avatar-result" class="">
+                        <img src="@Model.AvatarUrl" alt="Final Image" />
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+}
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4></h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
 
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model=>model.Id)
         <div class="form-group">
-            @Html.LabelFor(model => model.EventId, "赛事名称", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("EventId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.EventId, "", new { @class = "text-danger" })
+            <label class="control-label col-md-2"></label>
+            <div id="avatar-result" class="col-md-10">
+                <img src="" alt="Image" />
+                @Html.EditorFor(model => model.AvatarUrl, new { htmlAttributes = new { @class = "hidden" } })
             </div>
         </div>
 
         <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.AdCat, "广告显示于", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("AdCat", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.AdCat, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <fieldset>
+            <div class="form-group">
+                <label class="control-label col-md-2">没有关联</label>
+                <div class="col-md-10">
+                    @Html.RadioButtonFor(model => model.AdType, 1, htmlAttributes: new { @class = "form-control", @checked = "checked" })
+                </div>
+            </div>
+
+            <hr />
+            <div class="form-group">
+                <label class="control-label col-md-2">关联赛事</label>
+                <div class="col-md-10">
+                    @Html.RadioButtonFor(model => model.AdType, 2, htmlAttributes: new { @class = "form-control" })
+                    <br />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.EventId, "赛事名称", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("EventId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.EventId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <hr />
+            <div class="form-group">
+                <label class="control-label col-md-2">关联资讯</label>
+                <div class="col-md-10">
+                    @Html.RadioButtonFor(model => model.AdType, 3, htmlAttributes: new { @class = "form-control" })
+                    <br />
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.InformationId, "资讯标题", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("InformationId", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.InformationId, "", new { @class = "text-danger" })
+                </div>
+            </div>
+        </fieldset>
+        <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="OK" class="btn btn-default" />
             </div>
         </div>
     </div>
+
 }
 
-<h2>选择消息类</h2>
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
 
-    <div class="form-horizontal">
-        <h4></h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.Id)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.InformationId, "消息标题", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("InformationId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.InformationId, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </div>
-    </div>
-}
 
 <div>
     @Html.ActionLink("Back to List", "Index")

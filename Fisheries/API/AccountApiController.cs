@@ -129,35 +129,64 @@ namespace Fisheries.API
             return Ok(user);
         }
 
-        [Route("ChangeAvatar")]
+
+     
+        
+    public string GetTempPath()
+    {
+            string path = "C:/Logs/";
+        return path;
+    }
+
+    public void LogMessageToFile(string msg)
+    {
+        System.IO.StreamWriter sw = System.IO.File.AppendText(
+            GetTempPath() + "My Log File.txt");
+        try
+        {
+            string logLine = System.String.Format(
+                "{0:G}: {1}.", System.DateTime.Now, msg);
+            sw.WriteLine(logLine);
+        }
+        finally
+        {
+            sw.Close();
+        }
+    }
+
+
+    [Route("ChangeAvatar")]
         [HttpPost]
         public async Task<IHttpActionResult> ChangeAvatar()
         {
-            // Check if the request contains multipart/form-data.
-            if (!Request.Content.IsMimeMultipartContent())
-            {
-                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-            }
+            try {
+                // Check if the request contains multipart/form-data.
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
 
-            string root = HttpContext.Current.Server.MapPath("~/Temps/");
-            if (!Directory.Exists(root))
-            {
-                Directory.CreateDirectory(root);
-            }
-            var provider = new MultipartFormDataStreamProvider(root);
-
-            try
-            {
+                string root = HttpContext.Current.Server.MapPath("~/Temps/");
+                if (!Directory.Exists(root))
+                {
+                    Directory.CreateDirectory(root);
+                }
+                var provider = new MultipartFormDataStreamProvider(root);
                 // Read the form data.
+     
                 var task = await Request.Content.ReadAsMultipartAsync(provider);
                 var file = provider.FileData.First();
                 if (file == null)
-                    return BadRequest();
-
+                    throw new HttpResponseException(HttpStatusCode.NoContent);
+                //return BadRequest("No file");
                 if (!IsImage(file))
-                    return BadRequest();
+                    throw new HttpResponseException(HttpStatusCode.ExpectationFailed);
                 var orgfilename = GetDeserializedFileName(file);
-                var ext = Path.GetExtension(orgfilename);
+                var ext = ".jpg";
+                try { ext = Path.GetExtension(orgfilename); }
+                catch { }
+                if(string.IsNullOrEmpty(ext))
+                    ext = ".jpg";
                 var userId = User.Identity.GetUserId();
                 var user = UserManager.FindById(userId);
                 var phone = user.PhoneNumber;
@@ -184,9 +213,10 @@ namespace Fisheries.API
                 //file.SaveAs(HttpContext.Current.Server.MapPath(savePath));
                 return Ok();
             }
-            catch (System.Exception e)
+            catch(Exception ex)
             {
-                return BadRequest();
+                LogMessageToFile(ex.ToString());
+                return InternalServerError(ex);
             }
 
            
@@ -216,6 +246,7 @@ namespace Fisheries.API
         private readonly string[] _imageFileExtensions = { ".jpg", ".png", ".gif", ".jpeg" };
         private bool IsImage(MultipartFileData file)
         {
+            return true;
             if (file == null) return false;
             var f1 = false;
             //var f1 = file.ContentType.Contains("image");
@@ -494,8 +525,13 @@ namespace Fisheries.API
             {
                 return BadRequest("验证码无效");
             }
+            if (new ApplicationDbContext().Users.Any(u=>u.PhoneNumber == model.PhoneNumber))
+            {
+                return BadRequest("该手机已注册");
+            }
 
             var user = new ApplicationUser() { UserName = model.PhoneNumber, PhoneNumber = model.PhoneNumber };
+            user.CreatedTime = DateTime.Now;
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
@@ -510,7 +546,7 @@ namespace Fisheries.API
                 return GetErrorResult(result);
             }
 
-            return Ok();
+            return Ok(user);
         }
 
         [AllowAnonymous]
@@ -540,7 +576,7 @@ namespace Fisheries.API
                 return GetErrorResult(result);
             }
 
-            return Ok();
+            return Ok(user);
         }
 
         [AllowAnonymous]

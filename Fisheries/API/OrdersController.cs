@@ -141,6 +141,10 @@ namespace Fisheries.API
             {
                 return BadRequest("已无剩余钓位");
             }
+
+            var userId = User.Identity.GetUserId();
+            if ( db.Orders.Any(o => o.EventId == eventId && o.OrderStatuId != 4 && o.ApplicationUserId == userId))
+                return BadRequest("你已报名");
             //User.Identity.GetUserName
             var user = Request.GetOwinContext().GetUserManager<ApplicationUserManager>().FindById(User.Identity.GetUserId());
             var order = new Order()

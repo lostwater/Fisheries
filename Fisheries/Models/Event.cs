@@ -5,6 +5,11 @@ using System.Web;
 
 namespace Fisheries.Models
 {
+    public class EventStatu
+    {
+        public bool isOrderable { get; set; }
+        public string Message { get; set; }
+    }
     public class Event
     {
         public int Id { get; set; }
