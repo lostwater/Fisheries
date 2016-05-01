@@ -101,6 +101,18 @@ namespace Fisheries.API
                 return Ok(false);
         }
 
+        [HttpGet]
+        [Route("Ordered/{id}")]
+        //[ResponseType(typeof(bool))]
+        public async Task<IHttpActionResult> Ordered(int id)
+        {   
+            var theuserid = User.Identity.GetUserId();
+            if (await db.Orders.AnyAsync(o => o.EventId == id && o.OrderStatuId != 4 && o.ApplicationUserId == theuserid))
+                return Ok();
+            else
+                return BadRequest();
+        }
+
         // PUT: api/EventsApi/5
         [ResponseType(typeof(void))]
         public async Task<IHttpActionResult> PutEvent(int id, Event @event)
