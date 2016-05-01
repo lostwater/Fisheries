@@ -73,6 +73,9 @@ namespace Fisheries.Models
 
         public int ShopId { get; set; }
         public Shop Shop { get; set; }
+
+        public int? LiveId { get; set; }
+        public virtual Live Live { get; set; }
     }
 
     public class EventEditModel

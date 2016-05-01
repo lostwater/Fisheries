@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Fisheries.Models.LiveBindModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+    <div>
+        <h2><a href="/LiveTypes">直播类型</a></h2>
+    </div>
+
+<br />
+
+<hr />
+
+
+    <div>
+        <h3>@Html.ActionLink("同步", "SyncCloud")</h3>
+    </div>
+
+
+<table class="table">
+    <tr>
+        <th>
+            类型
+        </th>
+        <th>
+            直播名
+        </th>
+        <th>
+            赛事
+        </th>
+        <th>
+            渔场
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.LiveType.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CloudLive.activityName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Event.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Shop.Name)
+        </td>
+        <td>
+            @Html.ActionLink("编辑", "Edit", new { id=item.Id }) 
+        </td>
+    </tr>
+}
+
+</table>

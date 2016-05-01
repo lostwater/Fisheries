@@ -124,7 +124,7 @@ namespace Fisheries.API
                 if (order.Payment.isPaid && !order.Payment.isRefund)
                 {
                     order.OrderStatuId = 2;
-                    order.Code = GenCode();
+                    order.Code = GenCode(order);
                    
                 }
                 if (order.Payment.isPaid && order.Payment.isRefund)
@@ -144,10 +144,12 @@ namespace Fisheries.API
             
         }
 
-        string GenCode()
+        string GenCode(Order order)
         {
             Random rad = new Random();
-            return rad.Next(1000, 10000).ToString();
+            var code = rad.Next(1000, 10000).ToString();
+            code = DateTime.Now.ToString("yyyyMMdd") + order.PhoneNumber + code;
+            return code;
         }
         
         public static string VerifySignedHash(string strDataToVerify, string strSignedData, string strPublicKeyFilePath)

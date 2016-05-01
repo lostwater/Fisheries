@@ -28,7 +28,7 @@ namespace Fisheries.API
         // GET: api/EventsApi
         public IQueryable<Event> GetEvents(int page = 0, int pageSize = 100, string date = "")
         {
-            var events = db.Events.Where(e => e.IsPublished).Include(e => e.Shop);
+            var events = db.Events.Where(e => e.IsPublished).Include(e => e.Shop).Include(e => e.Shop.Live);
 
             if (!string.IsNullOrEmpty(date))
             {
@@ -39,7 +39,7 @@ namespace Fisheries.API
                 }
                 catch { }
             }
-            return events.OrderByDescending(e=>e.EventFrom).Skip(page * pageSize).Take(pageSize);
+            return events.OrderBy(e=>e.EventFrom).Skip(page * pageSize).Take(pageSize);
              
         }
 

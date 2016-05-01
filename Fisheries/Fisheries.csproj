@@ -248,10 +248,12 @@
     <Compile Include="alipay\RSA.cs" />
     <Compile Include="API\AdsController.cs" />
     <Compile Include="API\CelebritiesController.cs" />
+    <Compile Include="API\CloudLivesController.cs" />
     <Compile Include="API\EventsController.cs" />
     <Compile Include="API\InformationController.cs" />
     <Compile Include="API\InformationTypesController.cs" />
     <Compile Include="API\LiveController.cs" />
+    <Compile Include="API\LiveTypesController.cs" />
     <Compile Include="API\PaymentsController.cs" />
     <Compile Include="App_Start\AuthRepository.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -300,6 +302,8 @@
     <Compile Include="Controllers\ImageBrowserController.cs" />
     <Compile Include="Controllers\InformationController.cs" />
     <Compile Include="Controllers\InformationTypesController.cs" />
+    <Compile Include="Controllers\LivesController.cs" />
+    <Compile Include="Controllers\LiveTypesController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MeController.cs" />
     <Compile Include="Controllers\NewsController.cs" />
@@ -318,53 +322,13 @@
     <Compile Include="Helper\IPageExten.cs" />
     <Compile Include="Helper\MobSMS.cs" />
     <Compile Include="Helper\SMSSender.cs" />
-    <Compile Include="Migrations\201603211220469_Init.cs" />
-    <Compile Include="Migrations\201603211220469_Init.Designer.cs">
-      <DependentUpon>201603211220469_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201604300629336_Init.cs" />
+    <Compile Include="Migrations\201604300629336_Init.Designer.cs">
+      <DependentUpon>201604300629336_Init.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\201603211517004_Init1.cs" />
-    <Compile Include="Migrations\201603211517004_Init1.Designer.cs">
-      <DependentUpon>201603211517004_Init1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603211531066_Init2.cs" />
-    <Compile Include="Migrations\201603211531066_Init2.Designer.cs">
-      <DependentUpon>201603211531066_Init2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603220657148_Init3.cs" />
-    <Compile Include="Migrations\201603220657148_Init3.Designer.cs">
-      <DependentUpon>201603220657148_Init3.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603261218448_Init4.cs" />
-    <Compile Include="Migrations\201603261218448_Init4.Designer.cs">
-      <DependentUpon>201603261218448_Init4.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201603271506370_Init5.cs" />
-    <Compile Include="Migrations\201603271506370_Init5.Designer.cs">
-      <DependentUpon>201603271506370_Init5.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604050324361_Init6.cs" />
-    <Compile Include="Migrations\201604050324361_Init6.Designer.cs">
-      <DependentUpon>201604050324361_Init6.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604050432496_Init7.cs" />
-    <Compile Include="Migrations\201604050432496_Init7.Designer.cs">
-      <DependentUpon>201604050432496_Init7.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604050955189_Init8.cs" />
-    <Compile Include="Migrations\201604050955189_Init8.Designer.cs">
-      <DependentUpon>201604050955189_Init8.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604161345553_Init9.cs" />
-    <Compile Include="Migrations\201604161345553_Init9.Designer.cs">
-      <DependentUpon>201604161345553_Init9.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604171159530_Init10.cs" />
-    <Compile Include="Migrations\201604171159530_Init10.Designer.cs">
-      <DependentUpon>201604171159530_Init10.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201604201305028_Init11.cs" />
-    <Compile Include="Migrations\201604201305028_Init11.Designer.cs">
-      <DependentUpon>201604201305028_Init11.cs</DependentUpon>
+    <Compile Include="Migrations\201604300644159_Init1.cs" />
+    <Compile Include="Migrations\201604300644159_Init1.Designer.cs">
+      <DependentUpon>201604300644159_Init1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountBindingModels.cs" />
@@ -381,6 +345,9 @@
     <Compile Include="Controllers\ImageUploaderController.cs" />
     <Compile Include="Models\Information.cs" />
     <Compile Include="Models\InformationType.cs" />
+    <Compile Include="Models\CloudLive.cs" />
+    <Compile Include="Models\Live.cs" />
+    <Compile Include="Models\LiveType.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\MeViewModels.cs" />
     <Compile Include="Models\Order.cs" />
@@ -1849,6 +1816,16 @@
     <Content Include="Views\ApplicationUsers\Edit.cshtml" />
     <Content Include="Views\ApplicationUsers\Index.cshtml" />
     <Content Include="Views\ApplicationUsers\ResetUserPassowrd.cshtml" />
+    <Content Include="Views\LiveTypes\Create.cshtml" />
+    <Content Include="Views\LiveTypes\Delete.cshtml" />
+    <Content Include="Views\LiveTypes\Details.cshtml" />
+    <Content Include="Views\LiveTypes\Edit.cshtml" />
+    <Content Include="Views\LiveTypes\Index.cshtml" />
+    <Content Include="Views\Lives\Create.cshtml" />
+    <Content Include="Views\Lives\Delete.cshtml" />
+    <Content Include="Views\Lives\Details.cshtml" />
+    <Content Include="Views\Lives\Edit.cshtml" />
+    <Content Include="Views\Lives\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Project_Readme.html" />
@@ -1858,44 +1835,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\201603211220469_Init.resx">
-      <DependentUpon>201603211220469_Init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603211517004_Init1.resx">
-      <DependentUpon>201603211517004_Init1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603211531066_Init2.resx">
-      <DependentUpon>201603211531066_Init2.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603220657148_Init3.resx">
-      <DependentUpon>201603220657148_Init3.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603261218448_Init4.resx">
-      <DependentUpon>201603261218448_Init4.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201603271506370_Init5.resx">
-      <DependentUpon>201603271506370_Init5.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604050324361_Init6.resx">
-      <DependentUpon>201604050324361_Init6.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604050432496_Init7.resx">
-      <DependentUpon>201604050432496_Init7.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604050955189_Init8.resx">
-      <DependentUpon>201604050955189_Init8.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604161345553_Init9.resx">
-      <DependentUpon>201604161345553_Init9.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604171159530_Init10.resx">
-      <DependentUpon>201604171159530_Init10.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201604201305028_Init11.resx">
-      <DependentUpon>201604201305028_Init11.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gandalf\Gandalf.csproj">
@@ -1911,7 +1850,14 @@
       <Name>sdk_csharp</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201604300629336_Init.resx">
+      <DependentUpon>201604300629336_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201604300644159_Init1.resx">
+      <DependentUpon>201604300644159_Init1.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>

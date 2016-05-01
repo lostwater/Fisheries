@@ -9,7 +9,7 @@ namespace Fisheries.Models
     public class Shop
     {
         public int Id { get; set; }
-        
+
         [Display(Name = "名称")]
         public string Name { get; set; }
         [Display(Name = "渔场图地址")]
@@ -32,6 +32,9 @@ namespace Fisheries.Models
         [Display(Name = "商家用户ID")]
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
+        
+        public int? LiveId { get; set; }
+        public virtual Live Live { get; set; }
         
     }
 }
