@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Fisheries.Models.UserLiveRequest>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h2>Index</h2>
+
+ 
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ApplicationUser.UserName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CitizenId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LiveName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.State)
+            </th>
+            <th></th>
+        </tr>
+    
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FullName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CitizenId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LiveName)
+            </td>
+            <td>
+                @{ 
+                    string state = "";
+                    if (item.State == 0)
+                    {
+                        state = "未分配";
+                    }
+                    if (item.State == 1)
+                    {
+                        state = "已分配";
+                    }
+                    if (item.State == 2)
+                    {
+                        state = "已拒绝";
+                    }
+                }
+                @state
+             
+            </td>
+            <td>
+                @Html.ActionLink("标记已分配", "Approve", new { id=item.Id }) |
+                @Html.ActionLink("标记被拒绝", "Reject", new { id = item.Id }) |
+                @Html.ActionLink("删除", "Delete", new { id=item.Id })
+            </td>
+        </tr>
+    }
+    
+    </table>

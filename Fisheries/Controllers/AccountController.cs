@@ -23,6 +23,12 @@ namespace Fisheries.Controllers
         {
         }
 
+        [AllowAnonymous]
+        public ActionResult Weather()
+        {
+            return View();
+        }
+
         public ActionResult Index()
         {
             var theUser = UserManager.Users.FirstOrDefault(u => u.UserName == User.Identity.Name);

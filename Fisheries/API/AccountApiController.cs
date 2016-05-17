@@ -28,6 +28,8 @@ using Newtonsoft.Json;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Web.Http.Description;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 
 namespace Fisheries.API
 {
@@ -35,8 +37,8 @@ namespace Fisheries.API
     [RoutePrefix("api/Account")]
     public class AccountApiController : ApiController
     {
-       
 
+        ApplicationDbContext db = new ApplicationDbContext();
         private const string LocalLoginProvider = "Local";
 
         private ApplicationSignInManager _signInManager;
@@ -124,38 +126,85 @@ namespace Fisheries.API
         public IHttpActionResult UserDetail()
         {
             ApplicationDbContext db = new ApplicationDbContext();
+            
+            if (User.IsInRole("Buyer"))
+            {
+                var userId = User.Identity.GetUserId();
+                var user = db.Users.Include(u => u.Live).Include(u => u.Live.CloudLive).FirstOrDefault(u => u.Id == userId);
+                return Ok(user);
+            }
+               
+            else
+                return BadRequest("无法验证用户");
+        }
+
+        [Route("LiveRequest")]
+        [HttpGet]
+        [ResponseType(typeof(UserLiveRequest))]
+        public IHttpActionResult LiveRequest()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+
+            if (User.IsInRole("Buyer"))
+            {
+                var userId = User.Identity.GetUserId();
+                var request = db.UserLiveRequests.FirstOrDefault(r => r.ApplicationUserId == userId);
+                if (request != null)
+                    return Ok(request);
+                else
+                    return Ok();
+            }
+
+            else
+                return BadRequest("无法验证用户");
+        }
+
+        [Route("Lives")]
+        [HttpGet]
+        public IQueryable Lives()
+        {
             var userId = User.Identity.GetUserId();
-            var user = db.Users.Find(userId);
-            return Ok(user);
+            return db.Users.Find(userId).FollowedLives.AsQueryable();
+            //turn db.Users.Where(u => u.Id == userId).Include(u => u.FollowedLives).Include(u => u.FollowedLives.CloudLive).FirstOrDefault(u => u.Id == userId).FollowedLives;
         }
 
-
-     
-        
-    public string GetTempPath()
-    {
-            string path = "C:/Logs/";
-        return path;
-    }
-
-    public void LogMessageToFile(string msg)
-    {
-        System.IO.StreamWriter sw = System.IO.File.AppendText(
-            GetTempPath() + "My Log File.txt");
-        try
+        [Route("Shops")]
+        [HttpGet]
+        public IQueryable Shops()
         {
-            string logLine = System.String.Format(
-                "{0:G}: {1}.", System.DateTime.Now, msg);
-            sw.WriteLine(logLine);
+            var _db = new ApplicationDbContext();
+            _db.Configuration.ProxyCreationEnabled = false;
+            _db.Configuration.LazyLoadingEnabled = false;
+            var userId = User.Identity.GetUserId();
+            var user = _db.Users.Include(u => u.FollowedShops.Select(s=>s.Events)).FirstOrDefault(u => u.Id == userId);
+            var shops = user.FollowedShops;
+            var events = shops.SelectMany(s => s.Events).Where(e => e.IsPublished);
+            return events.AsQueryable();
+            //turn db.Users.Where(u => u.Id == userId).Include(u => u.FollowedLives).Include(u => u.FollowedLives.CloudLive).FirstOrDefault(u => u.Id == userId).FollowedLives;
         }
-        finally
+
+        [Route("IsBuyer")]
+        [HttpGet]
+        public IHttpActionResult IsBuyer()
         {
-            sw.Close();
+            if (User.IsInRole("Buyer"))
+                return Ok();
+            else
+                return BadRequest();
         }
-    }
+
+        [Route("IsSeller")]
+        [HttpGet]
+        public IHttpActionResult IsSeller()
+        {
+            if (User.IsInRole("Seller"))
+                return Ok();
+            else
+                return BadRequest();
+        }
 
 
-    [Route("ChangeAvatar")]
+        [Route("ChangeAvatar")]
         [HttpPost]
         public async Task<IHttpActionResult> ChangeAvatar()
         {
@@ -242,6 +291,27 @@ namespace Fisheries.API
 
         }
 
+        public string GetTempPath()
+        {
+            string path = "C:/Logs/";
+            return path;
+        }
+
+        public void LogMessageToFile(string msg)
+        {
+            System.IO.StreamWriter sw = System.IO.File.AppendText(
+                GetTempPath() + "My Log File.txt");
+            try
+            {
+                string logLine = System.String.Format(
+                    "{0:G}: {1}.", System.DateTime.Now, msg);
+                sw.WriteLine(logLine);
+            }
+            finally
+            {
+                sw.Close();
+            }
+        }
 
         private readonly string[] _imageFileExtensions = { ".jpg", ".png", ".gif", ".jpeg" };
         private bool IsImage(MultipartFileData file)

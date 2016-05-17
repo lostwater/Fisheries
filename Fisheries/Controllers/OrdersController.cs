@@ -203,10 +203,8 @@ namespace Fisheries.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> OrderVerify(OrderCodeVerifyModel model)
         {
-            if (ModelState.IsValid)
-            {
-                var order = await db.Orders.FirstOrDefaultAsync(o => o.PhoneNumber == model.PhoneNumber
-                    && o.Code == model.Code
+
+                var order = await db.Orders.FirstOrDefaultAsync(o => o.Code == model.Code
                     && o.OrderStatuId == 2
                     && !string.IsNullOrEmpty(o.Code)
                 );
@@ -222,8 +220,7 @@ namespace Fisheries.Controllers
                     }
                        
                 }
-            }
-            ModelState.AddModelError("", "无效的手机号或验证码。");
+            ModelState.AddModelError("", "无效的验证码。");
             return View(model);
         }
 

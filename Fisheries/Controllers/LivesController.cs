@@ -9,6 +9,8 @@ using System.Web;
 using System.Web.Mvc;
 using Fisheries.Models;
 using Newtonsoft.Json;
+using RestSharp;
+using Fisheries.Helper;
 
 namespace Fisheries.Controllers
 {
@@ -41,50 +43,15 @@ namespace Fisheries.Controllers
         }
 
 
-        public async Task<ActionResult> SyncCloud()
+        public ActionResult SyncCloud()
         {
-            var lcsdk = new Gandalf.LCUploader("nal4hqaahb", "2e44b05a1d3b751efc6a3a3eb1654e79");
-            Dictionary<string, object> args = new Dictionary<string, object>();
-            args.Add("ver", "3.0");
-            args.Add("userid", 823100);
-            args.Add("method", "letv.cloudlive.activity.search");
-
-            string retUrl = lcsdk.handleLiveParam("http://api.open.letvcloud.com/live/execute", args);
-            string strResult = lcsdk.doRequest(retUrl);
-            //return strResult.Replace("\\", "");
-            List<CloudLive> list = JsonConvert.DeserializeObject<List<CloudLive>>(strResult);
-            list = list.Where(l => l.activityStatus != 3).ToList();
-            list.ForEach(cl =>
-                 {
-                     if (!db.CloudLives.Any(_cl => _cl.activityId == cl.activityId))
-                     {
-                         db.CloudLives.Add(cl);
-                     }
-                     else
-                     {
-                         //db.CloudLives.Attach(cl);
-                         db.Entry(cl).State = EntityState.Modified;
-                     }
-            
-                     if(!db.Lives.Any(l=>l.CloudLiveId == cl.activityId))
-                     {
-                         var live = new Live()
-                         {
-                             CloudLiveId = cl.activityId,
-                             CloudLive = cl
-                         };
-                         db.Lives.Add(live);
-                     }
-                 }
-            );
-            db.SaveChanges();
+            new LiveSync().Sync();
 
             return RedirectToAction("Index");
         }
 
-
-        // GET: Lives/Create
-        public ActionResult Create()
+      
+         public ActionResult Create()
         {
             ViewBag.CloudLiveId = new SelectList(db.CloudLives, "activityId", "activityName");
             //ViewBag.EventId = new SelectList(db.Events, "Id", "Name");
@@ -129,6 +96,8 @@ namespace Fisheries.Controllers
             ViewBag.CloudLiveId = new SelectList(db.CloudLives, "activityId", "activityName", model.CloudLiveId);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", model.EventId);
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", model.ShopId);
+            var users = db.UserLiveRequests.Where(r => r.State == 0).Select(r => r.ApplicationUser);
+            ViewBag.UserId = new SelectList(users, "Id", "UserName", model.ApplicationUserId);
             return View(model);
         }
 
@@ -151,6 +120,9 @@ namespace Fisheries.Controllers
                     var @event = db.Events.Find(model.EventId.Value);
                     @event.LiveId = model.Id;
                 }
+                var user = db.Users.Find(model.ApplicationUserId);
+                if (user != null)
+                    user.LiveId = model.Id;
                 var live = db.Lives.Find(model.Id);
                 live.LiveTypeId = model.LiveTypeId;
                 await db.SaveChangesAsync();
@@ -160,6 +132,8 @@ namespace Fisheries.Controllers
             ViewBag.CloudLiveId = new SelectList(db.CloudLives, "activityId", "activityName", model.CloudLiveId);
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", model.EventId);
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", model.ShopId);
+            var users = db.UserLiveRequests.Where(r => r.State == 0).Select(r => r.ApplicationUser);
+            ViewBag.UserId = new SelectList(users, "Id", "UserName", model.ApplicationUserId);
             return View(model);
         }
 

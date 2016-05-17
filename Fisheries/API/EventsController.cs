@@ -25,10 +25,18 @@ namespace Fisheries.API
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
+
+        public EventsController()
+        {
+            db.Configuration.LazyLoadingEnabled = false;
+            db.Configuration.ProxyCreationEnabled = false;
+            //db.Configuration.
+        }
+
         // GET: api/EventsApi
         public IQueryable<Event> GetEvents(int page = 0, int pageSize = 100, string date = "")
         {
-            var events = db.Events.Where(e => e.IsPublished).Include(e => e.Shop).Include(e => e.Shop.Live);
+            var events = db.Events.Where(e => e.IsPublished);
 
             if (!string.IsNullOrEmpty(date))
             {
@@ -39,8 +47,8 @@ namespace Fisheries.API
                 }
                 catch { }
             }
-            return events.OrderBy(e=>e.EventFrom).Skip(page * pageSize).Take(pageSize);
-             
+            return events.OrderBy(e => e.EventFrom).Skip(page * pageSize).Take(pageSize).Include(e => e.Shop).Include(e => e.Shop.Live);
+
         }
 
 

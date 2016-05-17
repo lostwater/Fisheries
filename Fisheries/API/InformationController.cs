@@ -63,7 +63,6 @@ namespace Fisheries.API
         }
 
 
-
         [HttpGet]
         [Route("CeleberityInfomation")]
         public IQueryable<Information> CeleberityInfomation(int id)

@@ -114,6 +114,28 @@ namespace Fisheries.API
             return CreatedAtRoute("DefaultApi", new { id = order.Id }, order);
         }
 
+        [Route("Verify/{code}")]
+        [Authorize(Roles = "Seller")]
+        [HttpPost]
+        public async Task<IHttpActionResult> Verify(String code)
+        {
+            var userId = User.Identity.GetUserId();
+            var shop = db.Shops.FirstOrDefault(s => s.ApplicationUserId == userId);
+            if (shop == null)
+                return BadRequest(); 
+            var order = db.Orders.FirstOrDefault(o => o.Code == code);
+            if (order == null)
+                return BadRequest("无法找到对应订单");
+            if (order.Event.Shop != shop)
+                return BadRequest("该订单不属于你");
+            if (order.OrderStatuId != 2)
+                return BadRequest("订单状态无效");
+            order.OrderStatuId = 3;
+            await db.SaveChangesAsync();
+            return Ok("验证成功");    
+        }
+
+        
 
 
         // POST: api/Orders/CreateOrder

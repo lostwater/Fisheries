@@ -8,6 +8,8 @@ using Hangfire;
 using Fisheries.Models;
 using System.Data.Entity.Core.Objects;
 using System.Data.Entity;
+using Newtonsoft.Json;
+using Fisheries.Helper;
 
 [assembly: OwinStartup(typeof(Fisheries.Startup))]
 
@@ -23,6 +25,8 @@ namespace Fisheries
             ConfigureAuth(app);
 
             RecurringJob.AddOrUpdate(() => updateOrderStatu(), Cron.Minutely);
+            RecurringJob.AddOrUpdate(() => SyncCloud(), Cron.Minutely);
+            //RecurringJob.AddOrUpdate(() => SyncCloud(), "0 0/5 * * *");
         }
 
         public void updateOrderStatu()
@@ -55,11 +59,11 @@ namespace Fisheries
                 e.IsPublished = false;
             }
             db.SaveChanges();
+        }
 
-
-
-
-
+        public void SyncCloud()
+        {
+            new LiveSync().Sync();
         }
     }
 }
