@@ -130,6 +130,18 @@ namespace Fisheries.Controllers
             base.Dispose(disposing);
         }
 
+        public async Task<ActionResult> Unapprove(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            UserLiveRequest userLiveRequest = await db.UserLiveRequests.FindAsync(id);
+            userLiveRequest.State = 0;
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
         public async Task<ActionResult> Approve(int? id)
         {
             if (id == null)

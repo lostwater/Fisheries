@@ -33,6 +33,9 @@
         <th>
             渔场
         </th>
+        <th>
+            主播
+        </th>
         <th></th>
     </tr>
 
@@ -49,6 +52,9 @@
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Shop.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
         </td>
         <td>
             @Html.ActionLink("编辑", "Edit", new { id=item.Id }) 

@@ -83,7 +83,7 @@ namespace Fisheries.API
             userLiveRequest.ApplicationUserId = userId;
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return BadRequest("提交数据错误"+ModelState);
             }
             if(db.UserLiveRequests.Any(r=>r.ApplicationUserId == userId))
             {

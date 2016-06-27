@@ -36,13 +36,13 @@ namespace Fisheries.Helper
                     live.ChatId = result.objectId;
 
                     db.Entry(live).State = EntityState.Modified;
-                    
+                    db.SaveChanges();
                     // do something with the response
                 });
                
             }
             );
-            db.SaveChanges();
+           
         }
 
         public void UpdateCloudLive()

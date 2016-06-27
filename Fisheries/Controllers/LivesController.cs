@@ -97,7 +97,7 @@ namespace Fisheries.Controllers
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", model.EventId);
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", model.ShopId);
             var users = db.UserLiveRequests.Where(r => r.State == 0).Select(r => r.ApplicationUser);
-            ViewBag.UserId = new SelectList(users, "Id", "UserName", model.ApplicationUserId);
+            ViewBag.ApplicationUserId = new SelectList(users, "Id", "UserName", model.ApplicationUserId);
             return View(model);
         }
 
@@ -133,7 +133,7 @@ namespace Fisheries.Controllers
             ViewBag.EventId = new SelectList(db.Events, "Id", "Name", model.EventId);
             ViewBag.ShopId = new SelectList(db.Shops, "Id", "Name", model.ShopId);
             var users = db.UserLiveRequests.Where(r => r.State == 0).Select(r => r.ApplicationUser);
-            ViewBag.UserId = new SelectList(users, "Id", "UserName", model.ApplicationUserId);
+            ViewBag.ApplicationUserId = new SelectList(users, "Id", "UserName", model.ApplicationUserId);
             return View(model);
         }
 

@@ -62,9 +62,16 @@
              
             </td>
             <td>
-                @Html.ActionLink("标记已分配", "Approve", new { id=item.Id }) |
-                @Html.ActionLink("标记被拒绝", "Reject", new { id = item.Id }) |
-                @Html.ActionLink("删除", "Delete", new { id=item.Id })
+                @if (item.State == 0)
+                {
+                    @Html.ActionLink("标记已分配", "Approve", new { id = item.Id }) <text>|</text>
+                    @Html.ActionLink("标记被拒绝", "Reject", new { id = item.Id }) <text>|</text>
+                }
+                @if (item.State == 1)
+                {
+                    @Html.ActionLink("标记为未配", "Unapprove", new { id = item.Id }) <text>|</text>                
+                }
+                @Html.ActionLink("删除", "Delete", new { id = item.Id })
             </td>
         </tr>
     }

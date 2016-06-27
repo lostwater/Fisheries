@@ -122,11 +122,11 @@ namespace Fisheries.API
             var userId = User.Identity.GetUserId();
             var shop = db.Shops.FirstOrDefault(s => s.ApplicationUserId == userId);
             if (shop == null)
-                return BadRequest(); 
-            var order = db.Orders.FirstOrDefault(o => o.Code == code);
+                return BadRequest("找不到你的渔场"); 
+            var order = db.Orders.Include(o=>o.Event).Include(o=>o.Event.Shop).FirstOrDefault(o => o.Code == code);
             if (order == null)
                 return BadRequest("无法找到对应订单");
-            if (order.Event.Shop != shop)
+            if (order.Event.ShopId != shop.Id)
                 return BadRequest("该订单不属于你");
             if (order.OrderStatuId != 2)
                 return BadRequest("订单状态无效");
